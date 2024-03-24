@@ -1,8 +1,7 @@
 from django.urls import path
-from shop import views
+from shop.rest.views.shop import *
 urlpatterns = [
-    path('shops/', views.ShopListView.as_view(), name='shops'),
-    path('shop/<int:pk>', views.ManageShopView.as_view(), name='shops'),
-
-    path('roles/', views.RoleListView.as_view(), name='roles'),
+    path('shops/', ShopListView.as_view(), name='shops'),
+    path('shop/<str:pk>', ManageShopView.as_view(), name='update-shop'),
+    path('shop/delete/<str:pk>', DeleteShopView.as_view(), name='delete-shop'),
 ]
