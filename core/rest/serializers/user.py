@@ -1,13 +1,16 @@
 from django.contrib.auth import get_user_model, authenticate
 
 from rest_framework import serializers
-from django.utils.translation import gettext as _
+from shop.models import Role
+
+from core.rest.serializers.role import UserRoleSerializer
 
 class UserSerializer(serializers.ModelSerializer):
+    roles = UserRoleSerializer(many=True,  source = 'role_set')
 
     class Meta:
         model = get_user_model()
-        fields = ['phone_number', 'password', 'username']
+        fields = ['phone_number', 'password', 'username', 'roles']
         extra_kwargs ={'password': {'write_only': True, 'min_length':5}}
 
     def create(self, validated_data):

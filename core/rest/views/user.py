@@ -21,3 +21,7 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
         """Retrieve and return the authenticated user."""
         return self.request.user
 
+class DestroyUserView(generics.DestroyAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
