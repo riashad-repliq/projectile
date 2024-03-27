@@ -20,8 +20,11 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'rest_framework',
     'django_extensions',
+    'versatileimagefield',
+    'common',
     'core',
     'shop',
+    'product',
 ]
 
 MIDDLEWARE = [

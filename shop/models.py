@@ -6,17 +6,10 @@ from core.models import User
 class Shop (models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     name = models.CharField(max_length=100)
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
-
-'''
-class AbstractModelMine(models.Model):
-    uuid = models.UUIDField( default=uuid.uuid4(), unique=True, editable=False)
-    # created_at =
-    # updated_at =
-'''
 
 class Role(models.Model):
 

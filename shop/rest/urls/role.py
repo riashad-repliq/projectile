@@ -1,9 +1,11 @@
 from django.urls import path
 from shop.rest.views.role import *
 urlpatterns = [
-    path('roles/all', RoleListView.as_view(), name='roles'),
-    path('role/create', CreateRoleView.as_view(), name='create-role'),
-    path('role/<uuid:uuid>', DetailRoleView.as_view(), name='update-role'),
-    path('role/update/<uuid:uuid>', UpdateRoleView.as_view(), name='delete-role'),
-    path('role/delete/<uuid:uuid>', DeleteRoleView.as_view(), name='delete-role'),
+    # path('/roles', RoleListCreateView.as_view(), name='roles'),
+    # path('/<uuid:uuid>', ManageRoleView.as_view(), name='manage-role'),
+
+    path('/<uuid:uuid>/role', ShopRoleListCreateView.as_view(), name='list-create-shop-roles'),
+    path('/<uuid:uuid>/role<uuid', ManageShopRoleView.as_view(), name='manage-shop-roles'),
+
+
 ]

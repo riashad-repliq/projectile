@@ -12,7 +12,7 @@ class RoleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Role
-        fields = ['uuid','user','shop', 'user_uuid', 'username', 'phone_number', 'shop_uuid', 'shop_name', 'role_type']
+        fields = ['uuid', 'user_uuid', 'username', 'phone_number', 'shop_uuid', 'shop_name', 'role_type']
         read_only_fields = ['uuid']
 
     def get_user_uuid(self, instance):
