@@ -1,19 +1,28 @@
-from rest_framework import generics
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from django.shortcuts import render
 from shop.models import Shop
 from shop.rest.serializers.shop import ShopSerializer
 
 """will add permissions classes for all views at the end"""
 
-class ShopListView(generics.ListAPIView):
+class ShopListView(ListAPIView):
     serializer_class = ShopSerializer
-    queryset = Shop.objects.all()
+    queryset = Shop.objects.filter()
 
-
-class ManageShopView(generics.RetrieveUpdateAPIView):
+class CreateShopView(CreateAPIView):
     serializer_class = ShopSerializer
-    queryset = Shop.objects.all()
 
-class DeleteShopView(generics.DestroyAPIView):
+class DetailShopView(RetrieveAPIView):
     serializer_class = ShopSerializer
-    queryset = Shop.objects.all()
+    queryset = Shop.objects.filter()
+    lookup_field = 'uuid'
+
+class UpdateShopView(UpdateAPIView):
+    serializer_class = ShopSerializer
+    queryset = Shop.objects.filter()
+    lookup_field = 'uuid'
+
+class DeleteShopView(DestroyAPIView):
+    serializer_class = ShopSerializer
+    queryset = Shop.objects.filter()
+    lookup_field = 'uuid'

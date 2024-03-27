@@ -1,4 +1,5 @@
-from rest_framework import generics, authentication, permissions
+# from rest_framework import generics, authentication, permissions
+from rest_framework.generics import ListAPIView ,CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from core.models import *
@@ -6,22 +7,33 @@ from core.rest.serializers.user import (
     UserSerializer,
 )
 
-class CreateUserView(generics.CreateAPIView):
+class ListUserView(ListAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.filter()
+
+class CreateUserView(CreateAPIView):
     """Create a new user in the system."""
     serializer_class = UserSerializer
 
 
-class ManageUserView(generics.RetrieveUpdateAPIView):
+class RetrieveUserView(RetrieveAPIView):
     """Manage the authenticated user."""
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
     queryset = User.objects.all()
+    lookup_field = 'uuid'
 
-    def get_object(self):
-        """Retrieve and return the authenticated user."""
-        return self.request.user
+    # def get_object(self):
+    #     """Retrieve and return the authenticated user."""
+    #     return self.request.user
 
-class DestroyUserView(generics.DestroyAPIView):
+class UpdateUserView(UpdateAPIView):
+    """Manage the authenticated user."""
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    lookup_field = 'uuid'
+
+class DestroyUserView(DestroyAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    lookup_field = 'uuid'
 

@@ -6,12 +6,16 @@ from shop.models import Role
 from core.rest.serializers.role import UserRoleSerializer
 
 class UserSerializer(serializers.ModelSerializer):
-    roles = UserRoleSerializer(many=True,  source = 'role_set')
+    roles = UserRoleSerializer(many=True,  source = 'role_set', read_only = True)
 
     class Meta:
         model = get_user_model()
-        fields = ['phone_number', 'password', 'username', 'roles']
-        extra_kwargs ={'password': {'write_only': True, 'min_length':5}}
+        fields = ['uuid','phone_number', 'password', 'username', 'roles']
+        extra_kwargs ={
+            'password': {'write_only': True, 'min_length':5},
+            'uuid': {'read_only': True},
+            }
+
 
     def create(self, validated_data):
         return get_user_model().objects.create_user(**validated_data)
