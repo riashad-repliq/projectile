@@ -1,5 +1,8 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from django.shortcuts import render
+
+from common.permissions.shop import ShopPermission
+
 from shop.models import Shop
 from shop.rest.serializers.shop import ShopSerializer
 
@@ -13,4 +16,5 @@ class ManageShopView(RetrieveUpdateDestroyAPIView):
     serializer_class = ShopSerializer
     queryset = Shop.objects.filter()
     lookup_field = 'uuid'
+    # permission_classes = [ShopPermission]
 

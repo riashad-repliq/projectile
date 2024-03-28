@@ -8,7 +8,7 @@ from shop.models import Member
 from shop.rest.serializers.member import MemberSerializer
 
 class UserSerializer(DynamicFieldsModelSerializer):
-    members = MemberSerializer(many=True, fields=('member_uuid', 'shop_uuid', 'member_type'), source='member_set' , read_only = True,)
+    members = MemberSerializer(many=True, fields=('member_type', 'shop_info'), source='member_set' , read_only = True,)
 
     class Meta:
         model = get_user_model()

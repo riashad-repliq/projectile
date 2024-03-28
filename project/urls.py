@@ -8,7 +8,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
+    path('', include('rest_framework.urls')),
     #SWAGGER API
     path('api/schema', SpectacularAPIView.as_view(), name = 'api-schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name = 'api-schema'), name = 'api-docs'),
@@ -18,7 +18,7 @@ urlpatterns = [
 
     path('api/shops/', include('shop.rest.urls')),
 
-    path('api/products/', include('product.rest.urls')),
+    path('api/', include('product.rest.urls')),
 
 
 ]

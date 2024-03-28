@@ -24,6 +24,7 @@ class Member(models.Model):
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name = 'members')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     member_type = models.CharField(max_length=50, choices = members)
+    # is_default= models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.member_type} at {self.shop}'

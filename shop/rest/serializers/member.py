@@ -2,31 +2,31 @@ from shop.models import Member
 from rest_framework import serializers
 
 from common.helper import get_attribute,DynamicFieldsModelSerializer
-
+from core.rest.serializers import user
 
 class MemberSerializer(DynamicFieldsModelSerializer):
-    username = serializers.SerializerMethodField()
-    phone_number = serializers.SerializerMethodField()
-    shop_name = serializers.SerializerMethodField()
-    user_uuid = serializers.SerializerMethodField()
-    shop_uuid = serializers.SerializerMethodField()
+    user_info = serializers.SerializerMethodField()
+    shop_info= serializers.SerializerMethodField()
 
     class Meta:
         model = Member
-        fields = ['uuid', 'user_uuid', 'username', 'phone_number', 'shop_uuid', 'shop_name', 'member_type']
+        fields = ['uuid', 'member_type', 'user_info', 'shop_info']
         read_only_fields = ['uuid']
 
-    def get_user_uuid(self, instance):
-        return get_attribute(instance, 'user', 'uuid')
+    def get_user_info(self, obj):
+        user = obj.user
+        return {
+            'username': user.username,
+            'phone_number': user.phone_number,
+            'uuid': user.uuid
+        }
 
-    def get_username(self, instance):
-        return get_attribute(instance, 'user', 'username')
+    def get_shop_info(self, obj):
+        shop = obj.shop
+        return {
+            'uuid': shop.uuid,
+            'shop_name': shop.name,
+            'location': shop.location,
 
-    def get_phone_number(self, instance):
-        return get_attribute(instance, 'user', 'phone_number')
+        }
 
-    def get_shop_uuid(self, instance):
-        return get_attribute(instance, 'shop', 'uuid')
-
-    def get_shop_name(self, instance):
-        return get_attribute(instance, 'shop', 'name')
