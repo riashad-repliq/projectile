@@ -13,3 +13,4 @@ class ManageShopView(RetrieveUpdateDestroyAPIView):
     serializer_class = ShopSerializer
     queryset = Shop.objects.filter()
     lookup_field = 'uuid'
+

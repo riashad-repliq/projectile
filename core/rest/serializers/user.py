@@ -1,16 +1,18 @@
 from django.contrib.auth import get_user_model, authenticate
 
 from rest_framework import serializers
-from shop.models import Role
 
-from core.rest.serializers.role import UserRoleSerializer
+from common.helper import DynamicFieldsModelSerializer
+from shop.models import Member
 
-class UserSerializer(serializers.ModelSerializer):
-    roles = UserRoleSerializer(many=True,  source = 'role_set', read_only = True)
+from shop.rest.serializers.member import MemberSerializer
+
+class UserSerializer(DynamicFieldsModelSerializer):
+    members = MemberSerializer(many=True, fields=('member_uuid', 'shop_uuid', 'member_type'), source='member_set' , read_only = True,)
 
     class Meta:
         model = get_user_model()
-        fields = ['uuid','phone_number', 'password', 'username', 'roles']
+        fields = ['uuid','phone_number', 'password', 'username', 'members']
         extra_kwargs ={
             'password': {'write_only': True, 'min_length':5},
             'uuid': {'read_only': True},

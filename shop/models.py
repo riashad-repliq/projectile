@@ -11,9 +11,9 @@ class Shop (models.Model):
     def __str__(self):
         return self.name
 
-class Role(models.Model):
+class Member(models.Model):
 
-    roles = (
+    members = (
         ('owner', 'Owner'),
         ('admin', 'Admin'),
         ('manager', 'Manager'),
@@ -21,9 +21,9 @@ class Role(models.Model):
 
     )
     uuid = models.UUIDField( default=uuid.uuid4, unique=True, editable=False)
-    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name = 'roles')
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name = 'members')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    role_type = models.CharField(max_length=50, choices = roles)
+    member_type = models.CharField(max_length=50, choices = members)
 
     def __str__(self):
-        return f'{self.role_type} at {self.shop}'
+        return f'{self.member_type} at {self.shop}'

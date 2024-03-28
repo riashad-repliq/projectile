@@ -8,7 +8,7 @@ from core.rest.views.user import *
 
 urlpatterns = [
     path('', ListCreateUserView.as_view(), name='user-list'),
-    path('/<uuid:uuid>', ManageUserView.as_view(), name='user-details'),
+    path('<uuid:uuid>', ManageUserView.as_view(), name='user-details'),
 
 
 

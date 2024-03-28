@@ -1,9 +1,10 @@
-from shop.models import Role
+from shop.models import Member
 from rest_framework import serializers
 
-from common.helper import get_attribute
+from common.helper import get_attribute,DynamicFieldsModelSerializer
 
-class RoleSerializer(serializers.ModelSerializer):
+
+class MemberSerializer(DynamicFieldsModelSerializer):
     username = serializers.SerializerMethodField()
     phone_number = serializers.SerializerMethodField()
     shop_name = serializers.SerializerMethodField()
@@ -11,8 +12,8 @@ class RoleSerializer(serializers.ModelSerializer):
     shop_uuid = serializers.SerializerMethodField()
 
     class Meta:
-        model = Role
-        fields = ['uuid', 'user_uuid', 'username', 'phone_number', 'shop_uuid', 'shop_name', 'role_type']
+        model = Member
+        fields = ['uuid', 'user_uuid', 'username', 'phone_number', 'shop_uuid', 'shop_name', 'member_type']
         read_only_fields = ['uuid']
 
     def get_user_uuid(self, instance):
@@ -29,4 +30,3 @@ class RoleSerializer(serializers.ModelSerializer):
 
     def get_shop_name(self, instance):
         return get_attribute(instance, 'shop', 'name')
-
