@@ -22,6 +22,9 @@ class Product(models.Model):
 class ShopProduct(models.Model):
 
     uuid = models.UUIDField( default=uuid.uuid4(), unique=True, editable=False)
-    shop = models.ForeignKey(Shop, on_delete= models.CASCADE )
+    shop = models.ForeignKey(Shop, on_delete= models.CASCADE, related_name='shop_products' )
     product = models.ForeignKey(Product, on_delete= models.CASCADE)
     quantity = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.product} in {self.shop.name}'

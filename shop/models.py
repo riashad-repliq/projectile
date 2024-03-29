@@ -26,5 +26,9 @@ class Member(models.Model):
     member_type = models.CharField(max_length=50, choices = members)
     # is_default= models.BooleanField(default=False)
 
+    class Meta:
+        #so that one user can be associated with only one membership_type of any store
+        unique_together = ('shop', 'user')
+
     def __str__(self):
         return f'{self.member_type} at {self.shop}'

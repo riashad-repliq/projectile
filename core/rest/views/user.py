@@ -1,5 +1,6 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.settings import api_settings
 
 
@@ -12,17 +13,18 @@ from core.rest.serializers.user import (
     UserSerializer,
 )
 
-class ListCreateUserView(ListCreateAPIView):
+class CreateUserView(CreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.filter()
-
-
 
 
 class ManageUserView(RetrieveUpdateDestroyAPIView):
     """Manage the authenticated user."""
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    lookup_field = 'uuid'
+    # lookup_field = 'uuid'
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return get_object_or_404(User, uuid=self.request.user.uuid)

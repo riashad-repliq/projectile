@@ -1,20 +1,34 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from django.shortcuts import render
 
-from common.permissions.shop import ShopPermission
+from common.permissions.shop import *
 
-from shop.models import Shop
-from shop.rest.serializers.shop import ShopSerializer
+from shop.models import Shop, Member
+from shop.rest.serializers.shop import PublicShopSerializer, PrivateShopSerializer
 
-"""will add permissions classes for all views at the end"""
+"""Public Views"""
 
 class ShopListCreateView(ListCreateAPIView):
-    serializer_class = ShopSerializer
+    serializer_class = PublicShopSerializer
     queryset = Shop.objects.filter()
 
-class ManageShopView(RetrieveUpdateDestroyAPIView):
-    serializer_class = ShopSerializer
+    def perform_create(self, serializer):
+        shop= serializer.save()
+
+        user = self.request.user
+        member = Member.objects.create(shop =shop, user = user, member_type ='owner')
+
+class RetrieveShopView(RetrieveAPIView):
+    serializer_class = PublicShopSerializer
     queryset = Shop.objects.filter()
     lookup_field = 'uuid'
-    # permission_classes = [ShopPermission]
+
+"""Private Views"""
+
+class ManageShopView(RetrieveUpdateDestroyAPIView):
+    serializer_class = PrivateShopSerializer
+    queryset = Shop.objects.filter()
+    lookup_field = 'uuid'
+
+
 

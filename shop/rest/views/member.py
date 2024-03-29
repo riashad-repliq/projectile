@@ -1,21 +1,20 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from common.permissions.shop import *
 from shop.models import Shop, Member
 from shop.rest.serializers.member import MemberSerializer
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 
-"""will add permissions classes for all views at the end"""
 
 class ShopMemberListCreateView(ListCreateAPIView):
     serializer_class = MemberSerializer
+    permission_classes = [ShopPermission]
+
 
     def get_queryset(self):
         shop_uuid = self.kwargs.get('shop_uuid')
-
-        try:
-            shop = Shop.objects.get(uuid=shop_uuid)
-        except Shop.DoesNotExist:
-            raise NotFound(detail="Shop does not exist")
+        shop = get_object_or_404(Shop, uuid=shop_uuid)
 
         # Getting member
         members = Member.objects.filter(shop=shop)
@@ -23,16 +22,23 @@ class ShopMemberListCreateView(ListCreateAPIView):
             raise NotFound(detail="This shop does not have any members")
 
         return members
+    def perform_create(self, serializer):
+        shop_uuid = self.kwargs.get('shop_uuid')
+        shop = get_object_or_404(Shop, uuid=shop_uuid)
+        serializer.save(shop=shop)
+
 
 class ManageShopMemberView(RetrieveUpdateDestroyAPIView):
     serializer_class = MemberSerializer
     queryset = Member.objects.filter()
 
+    permission_classes = [ShopPermission]
+
     def get_object(self):
         shop_uuid = self.kwargs.get('shop_uuid')
 
         try:
-            shop = Shop.objects.get(uuid=shop_uuid)
+            shop = get_object_or_404(Shop, uuid=shop_uuid)
         except Shop.DoesNotExist:
             raise NotFound(detail="Shop does not exist")
 
@@ -40,10 +46,9 @@ class ManageShopMemberView(RetrieveUpdateDestroyAPIView):
         member_uuid = self.kwargs.get('member_uuid', None)
 
         try:
-            member = Member.objects.get(uuid=member_uuid)
+            member = get_object_or_404(Member,uuid=member_uuid)
         except Member.DoesNotExist:
             raise NotFound(detail="Member does not exist")
 
 
         return member
-

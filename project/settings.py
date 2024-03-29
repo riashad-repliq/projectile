@@ -95,6 +95,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+SILENCED_SYSTEM_CHECKS = ['urls.W002', 'security.W019']
+
 
 
 LANGUAGE_CODE = 'en-us'

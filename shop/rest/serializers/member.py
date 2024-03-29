@@ -1,17 +1,28 @@
-from shop.models import Member
+from django.shortcuts import get_object_or_404
+
+from core.models import User
+from shop.models import Shop, Member
 from rest_framework import serializers
 
 from common.helper import get_attribute,DynamicFieldsModelSerializer
-from core.rest.serializers import user
 
+from core.rest.serializers import user
 class MemberSerializer(DynamicFieldsModelSerializer):
+    user_uuid = serializers.UUIDField(write_only=True)
     user_info = serializers.SerializerMethodField()
-    shop_info= serializers.SerializerMethodField()
 
     class Meta:
         model = Member
-        fields = ['uuid', 'member_type', 'user_info', 'shop_info']
+        fields = ['uuid', 'member_type', 'user_uuid',  'user_info']
         read_only_fields = ['uuid']
+
+    def create(self, validated_data):
+        user_uuid = validated_data.pop('user_uuid')
+        user = get_object_or_404(User, uuid=user_uuid)
+
+
+        member = Member.objects.create(user=user,**validated_data)
+        return member
 
     def get_user_info(self, obj):
         user = obj.user
@@ -20,13 +31,3 @@ class MemberSerializer(DynamicFieldsModelSerializer):
             'phone_number': user.phone_number,
             'uuid': user.uuid
         }
-
-    def get_shop_info(self, obj):
-        shop = obj.shop
-        return {
-            'uuid': shop.uuid,
-            'shop_name': shop.name,
-            'location': shop.location,
-
-        }
-
