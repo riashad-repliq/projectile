@@ -1,14 +1,15 @@
 from common.permissions.shop import *
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
 from django.shortcuts import render
 from shop.models import Shop
 from product.models import Product, ShopProduct
-from product.rest.serializers.shop_product import PrivateShopProductSerializer
+from product.rest.serializers.shop_product import *
+from product.rest.serializers.product import NewProductSerializer
 from rest_framework.exceptions import NotFound
 
 
 class ShopProductListCreateView(ListCreateAPIView):
-    serializer_class = PrivateShopProductSerializer
+    serializer_class = PrivateListCreateShopProductSerializer
     permission_classes = [ShopPermission]
 
     def get_queryset(self):
@@ -27,7 +28,7 @@ class ShopProductListCreateView(ListCreateAPIView):
         serializer.save(shop=shop)
 
 class ManageShopProductView(RetrieveUpdateDestroyAPIView):
-    serializer_class = PrivateShopProductSerializer
+    serializer_class = PrivateManageShopProductSerializer
     queryset = Product.objects.filter()
     permission_classes = [ShopPermission]
 
@@ -49,3 +50,14 @@ class ManageShopProductView(RetrieveUpdateDestroyAPIView):
 
         return product
 
+
+class CreateNewProduct(CreateAPIView):
+    serializer_class = NewProductSerializer
+    permission_classes = [ShopPermission]
+
+    def perform_create(self, serializer):
+        shop_uuid = self.kwargs.get('shop_uuid')
+        shop = Shop.objects.get(uuid=shop_uuid)
+        quantity = self.request.data.get('quantity')
+        shop_product = Shop.objects.create()
+        serializer.save()

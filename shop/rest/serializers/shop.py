@@ -3,13 +3,13 @@ from common.helper import DynamicFieldsModelSerializer
 from core.models import User
 from shop.models import Shop, Member
 from rest_framework import serializers
-from shop.rest.serializers.member import MemberSerializer
+from shop.rest.serializers.member import ManageMemberSerializer
 from product.rest.serializers.shop_product import *
 
 """Private Serializers"""
 
 class PrivateShopSerializer(DynamicFieldsModelSerializer):
-    members = MemberSerializer(many=True, read_only=True, fields=('uuid', 'user_uuid', 'username'))
+    members = ManageMemberSerializer(many=True, read_only=True, fields=('uuid', 'user_uuid', 'username'))
     products = serializers.SerializerMethodField()
 
     class Meta:
@@ -18,7 +18,7 @@ class PrivateShopSerializer(DynamicFieldsModelSerializer):
         read_only_fields = ['uuid', 'members', 'products']
 
     def get_products(self, obj):
-        shop_products = obj.shop_products.all()
+        shop_products = obj.shop_products.filter()
         serializer = PrivateShopProductSerializer(shop_products, many=True, fields=('uuid', 'product_info'))
         return serializer.data
 

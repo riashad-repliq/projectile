@@ -5,10 +5,12 @@ from rest_framework import serializers
 from common.helper import DynamicFieldsModelSerializer
 from shop.models import Member
 
-from shop.rest.serializers.member import MemberSerializer
+from shop.rest.serializers.member import ManageMemberSerializer
+
+from cart.models import Cart
 
 class UserSerializer(DynamicFieldsModelSerializer):
-    members = MemberSerializer(many=True, fields=('member_type', 'shop_info'), source='member_set' , read_only = True,)
+    members = ManageMemberSerializer(many=True, fields=('member_type', 'shop_info'), source='member_set' , read_only = True,)
 
     class Meta:
         model = get_user_model()
@@ -20,7 +22,10 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
 
     def create(self, validated_data):
-        return get_user_model().objects.create_user(**validated_data)
+        user = get_user_model().objects.create_user(**validated_data)
+        Cart.objects.create(user=user)
+
+        return user
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)

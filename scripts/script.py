@@ -1,4 +1,5 @@
 from core.models import *
+from product.models import *
 
 # def run():
 #     shop , created = Shop.objects.get_or_create(name= 'myShop', owner_id= User.objects.first().id)
@@ -8,6 +9,5 @@ from core.models import *
 #     print(shop.members.all())
 
 def run():
-    user, created = User.objects.get_or_create(phone_number= 12345555, password='randalthor2001')
-    user.username = 'MYname'
-    print(user.phone_number,user.username)
+    shop_product = ShopProduct.objects.get(uuid="54fad857-a7bf-448e-8e2f-42af00d785f0")
+    print (shop_product)

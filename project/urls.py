@@ -20,5 +20,7 @@ urlpatterns = [
 
     path('api/v1', include('product.rest.urls')),
 
+    path('api/v1', include('cart.rest.urls')),
+
 
 ]

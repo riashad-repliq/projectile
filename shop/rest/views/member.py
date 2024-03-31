@@ -2,13 +2,13 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from django.shortcuts import render, get_object_or_404
 from common.permissions.shop import *
 from shop.models import Shop, Member
-from shop.rest.serializers.member import MemberSerializer
+from shop.rest.serializers.member import ListCreateMemberSerializer, ManageMemberSerializer
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 
 
 class ShopMemberListCreateView(ListCreateAPIView):
-    serializer_class = MemberSerializer
+    serializer_class = ListCreateMemberSerializer
     permission_classes = [ShopPermission]
 
 
@@ -29,7 +29,7 @@ class ShopMemberListCreateView(ListCreateAPIView):
 
 
 class ManageShopMemberView(RetrieveUpdateDestroyAPIView):
-    serializer_class = MemberSerializer
+    serializer_class = ManageMemberSerializer
     queryset = Member.objects.filter()
 
     permission_classes = [ShopPermission]

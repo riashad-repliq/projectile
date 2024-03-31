@@ -26,5 +26,13 @@ class ShopProduct(models.Model):
     product = models.ForeignKey(Product, on_delete= models.CASCADE)
     quantity = models.IntegerField()
 
+    class Meta:
+        #so that one shop can have only one instancec for a single product
+        unique_together = ('shop', 'product')
+
+
+
     def __str__(self):
         return f'{self.product} in {self.shop.name}'
+
+
