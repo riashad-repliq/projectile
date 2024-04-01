@@ -20,15 +20,21 @@ class ShopListCreateView(ListCreateAPIView):
 
 class RetrieveShopView(RetrieveAPIView):
     serializer_class = PublicShopSerializer
-    queryset = Shop.objects.filter()
-    lookup_field = 'uuid'
+
+    def get_object(self):
+        shop_slug = self.kwargs.get('shop_slug')
+        shop = get_object_or_404(Shop, slug=shop_slug)
+        return shop
 
 """Private Views"""
 
 class ManageShopView(RetrieveUpdateDestroyAPIView):
     serializer_class = PrivateShopSerializer
-    queryset = Shop.objects.filter()
-    lookup_field = 'uuid'
+    permission_classes= [ShopPermission]
 
+    def get_object(self):
+        shop_uuid = self.kwargs.get('shop_uuid')
+        shop = get_object_or_404(Shop, uuid=shop_uuid)
+        return shop
 
 

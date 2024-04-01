@@ -1,12 +1,12 @@
 from django.shortcuts import get_object_or_404
 
-from core.models import User
+from django.contrib.auth import get_user_model
 from shop.models import Shop, Member
 from rest_framework import serializers
 
-from common.helper import get_attribute, DynamicFieldsModelSerializer
+from common.helper import  DynamicFieldsModelSerializer
 
-from core.rest.serializers import user
+User = get_user_model()
 
 
 class ListCreateMemberSerializer(DynamicFieldsModelSerializer):
@@ -33,19 +33,14 @@ class ListCreateMemberSerializer(DynamicFieldsModelSerializer):
             'uuid': user.uuid
         }
 
+
 class ManageMemberSerializer(DynamicFieldsModelSerializer):
-    user_info = serializers.SerializerMethodField()
+    shop_name = serializers.CharField(source='shop.name')
 
     class Meta:
         model = Member
-        fields = ['uuid', 'member_type', 'user_info']
+        fields = ['uuid', 'shop_name', 'member_type']
         read_only_fields = ['uuid']
 
 
-    def get_user_info(self, obj):
-        user = obj.user
-        return {
-            'username': user.username,
-            'phone_number': user.phone_number,
-            'uuid': user.uuid
-        }
+8

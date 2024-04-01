@@ -15,15 +15,12 @@ from core.rest.serializers.user import (
 
 class CreateUserView(CreateAPIView):
     serializer_class = UserSerializer
-    queryset = User.objects.filter()
 
 
 class ManageUserView(RetrieveUpdateDestroyAPIView):
     """Manage the authenticated user."""
     serializer_class = UserSerializer
-    queryset = User.objects.all()
-    # lookup_field = 'uuid'
-    # authentication_classes = [JWTAuthentication]
+    queryset = User.objects.filter()
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):

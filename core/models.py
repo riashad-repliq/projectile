@@ -1,9 +1,12 @@
-""" CUSTOM USER MODEL AND A CUSTOM USER_MODEL_MANAGER """
+
 import uuid
 
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+from versatileimagefield.fields import VersatileImageField
 
 class UserManager(BaseUserManager):
     """Manager for our custom user model"""
@@ -32,9 +35,9 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model"""
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    phone_number=models.CharField( max_length=50, unique=True)
+    phone_number=PhoneNumberField(unique=True)
     username = models.CharField(max_length=255)
-    profile_image = models.ImageField(blank=True, null=True)
+    profile_image = VersatileImageField()
     created_on = models.DateTimeField(auto_now_add = True)
     updated_on = models.DateTimeField(auto_now_add = True)
     is_active = models.BooleanField(default=True)
@@ -45,5 +48,5 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'phone_number'
 
     def __str__(self):
-        return self.phone_number
+        return self.username
 

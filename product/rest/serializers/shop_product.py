@@ -4,15 +4,55 @@ from django.http import Http404
 from common.helper import DynamicFieldsModelSerializer
 
 from product.models import *
+from product.rest.serializers.tags import *
+
+
+
+"""PUBLIC SERIALIZERS"""
+class PublicShopProductSerializer(DynamicFieldsModelSerializer):
+    product_info = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = ShopProduct
+        fields = [ 'product_info', 'quantity']
+        read_only_fields = ['uuid' ,'quantity']
+
+    def get_product_info(self, obj):
+        product = obj.product
+        return {
+            'product_name': product.name,
+            'description': product.description,
+            'uuid': product.uuid,
+        }
+
+class PublicListShopProductSerializer(DynamicFieldsModelSerializer):
+    product_info = serializers.SerializerMethodField()
+    tags = TaggedShopProductSerializer(many=True, source= 'shop_product_tags')
+
+    class Meta:
+        model = ShopProduct
+        fields = [ 'product_info', 'quantity', 'tags']
+
+        read_only_fields = ['uuid']
+
+    def get_product_info(self, obj):
+        product = obj.product
+        return {
+            'product_name': product.name,
+            'description': product.description,
+            'uuid': product.uuid
+        }
+
 
 """PRIVATE SERIALIZERS"""
 class PrivateListCreateShopProductSerializer(DynamicFieldsModelSerializer):
     product_uuid = serializers.UUIDField(write_only=True)
     product_info = serializers.SerializerMethodField()
+    tags = TaggedShopProductSerializer(many=True, source= 'shop_product_tags')
 
     class Meta:
         model = ShopProduct
-        fields = ['uuid', 'product_uuid', 'product_info', 'quantity']
+        fields = ['uuid', 'product_uuid', 'product_info', 'quantity', 'tags']
 
         read_only_fields = ['uuid']
 
@@ -52,22 +92,7 @@ class PrivateManageShopProductSerializer(DynamicFieldsModelSerializer):
         return {
             'product_name': product.name,
             'description': product.description,
-            'uuid': product.uuid
+            'uuid': product.uuid,
+
         }
 
-"""PUBLIC SERIALIZERS"""
-class PublicShopProductSerializer(DynamicFieldsModelSerializer):
-    product_info = serializers.SerializerMethodField()
-
-    class Meta:
-        model = ShopProduct
-        fields = ['uuid',  'product_info']
-        read_only_fields = ['uuid']
-
-    def get_product_info(self, obj):
-        product = obj.product
-        return {
-            'product_name': product.name,
-            'description': product.description,
-            'uuid': product.uuid
-        }

@@ -21,12 +21,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'versatileimagefield',
-    'common',
+    'phonenumber_field',
     'core',
     'shop',
     'product',
+    'image',
     'cart',
     'order',
+
 ]
 
 MIDDLEWARE = [
@@ -87,18 +89,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
-REST_FRAMEWORK = {
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
-SILENCED_SYSTEM_CHECKS = ['urls.W002', 'security.W019']
 
+SILENCED_SYSTEM_CHECKS = ['urls.W002', 'security.W019']
 
 
 LANGUAGE_CODE = 'en-us'

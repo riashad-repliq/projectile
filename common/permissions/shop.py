@@ -26,8 +26,8 @@ class ShopPermission(permissions.BasePermission):
             elif member.member_type == 'staff':
                 return request.method == 'GET'
 
-        except Member.DoesNotExist:
-            raise NotFound(detail="request.user is not a member of any shop")
+        except :
+            raise NotFound(detail="You do not have the permission to access this page")
 
 
 

@@ -1,8 +1,10 @@
 import uuid
 from django.db import models
 
-from core.models import User
+from django.contrib.auth import get_user_model
 from product.models import ShopProduct
+
+User = get_user_model()
 
 class Cart(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)

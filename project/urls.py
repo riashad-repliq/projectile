@@ -15,12 +15,16 @@ urlpatterns = [
 
     #ProjectAPPs
     path('api/v1', include('core.rest.urls')),
+    # path("api/v1/auth",include('core.rest.urls.auth')),
 
     path('api/v1', include('shop.rest.urls')),
 
     path('api/v1', include('product.rest.urls')),
 
     path('api/v1', include('cart.rest.urls')),
+
+    path('api/v1', include('order.rest.urls')),
+
 
 
 ]

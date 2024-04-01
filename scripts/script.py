@@ -1,5 +1,7 @@
 from core.models import *
 from product.models import *
+from django.http import request
+from cart.models import *
 
 # def run():
 #     shop , created = Shop.objects.get_or_create(name= 'myShop', owner_id= User.objects.first().id)
@@ -9,5 +11,6 @@ from product.models import *
 #     print(shop.members.all())
 
 def run():
-    shop_product = ShopProduct.objects.get(uuid="54fad857-a7bf-448e-8e2f-42af00d785f0")
-    print (shop_product)
+    user = User.objects.create_user(phone_number=+8801234567323, username = "ris", password= 'riashad')
+
+    print (user)

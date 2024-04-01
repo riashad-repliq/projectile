@@ -1,5 +1,5 @@
 from common.permissions.shop import *
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView, RetrieveAPIView, ListAPIView
 from django.shortcuts import render
 from shop.models import Shop
 from product.models import Product, ShopProduct
@@ -8,6 +8,46 @@ from product.rest.serializers.product import NewProductSerializer
 from rest_framework.exceptions import NotFound
 
 
+"""PUBLIC VIEWS"""
+class ListShopProductView(ListAPIView):
+    serializer_class = PublicListShopProductSerializer
+
+
+    def get_queryset(self):
+        shop_slug = self.kwargs.get('shop_slug')
+        shop = get_object_or_404(Shop, slug=shop_slug)
+
+        shop_products = ShopProduct.objects.filter(shop=shop)
+        if not shop_products:
+            raise NotFound(detail="This shop does not have any products")
+
+        return shop_products
+
+
+class RetrieveShopProductView(RetrieveAPIView):
+    serializer_class = PublicShopProductSerializer
+    queryset = Product.objects.filter()
+
+    def get_object(self):
+        shop_slug = self.kwargs.get('shop_slug')
+
+        try:
+            shop = Shop.objects.get(slug=shop_slug)
+        except Shop.DoesNotExist:
+            raise NotFound(detail="Shop does not exist")
+
+        shop_product_slug = self.kwargs.get('shop_product_slug', None)
+
+        try:
+            product = ShopProduct.objects.get(slug=shop_product_slug)
+        except ShopProduct.DoesNotExist:
+            raise NotFound(detail="This shop does not sell this product")
+
+        return product
+
+
+
+"""PRIVATE VIEWS"""
 class ShopProductListCreateView(ListCreateAPIView):
     serializer_class = PrivateListCreateShopProductSerializer
     permission_classes = [ShopPermission]
@@ -16,12 +56,12 @@ class ShopProductListCreateView(ListCreateAPIView):
         shop_uuid = self.kwargs.get('shop_uuid')
         shop = get_object_or_404(Shop, uuid=shop_uuid)
 
-        # Getting product
-        products = ShopProduct.objects.filter(shop=shop)
-        if not products:
+        shop_products = ShopProduct.objects.filter(shop=shop)
+        if not shop_products:
             raise NotFound(detail="This shop does not have any products")
 
-        return products
+        return shop_products
+
     def perform_create(self, serializer):
         shop_uuid = self.kwargs.get('shop_uuid')
         shop = get_object_or_404(Shop, uuid=shop_uuid)
@@ -40,7 +80,6 @@ class ManageShopProductView(RetrieveUpdateDestroyAPIView):
         except Shop.DoesNotExist:
             raise NotFound(detail="Shop does not exist")
 
-        #  Getting product uuid
         shop_product_uuid = self.kwargs.get('shop_product_uuid', None)
 
         try:
@@ -59,5 +98,6 @@ class CreateNewProduct(CreateAPIView):
         shop_uuid = self.kwargs.get('shop_uuid')
         shop = Shop.objects.get(uuid=shop_uuid)
         quantity = self.request.data.get('quantity')
-        shop_product = Shop.objects.create()
-        serializer.save()
+
+        product =serializer.save(introduced_by=shop)
+        ShopProduct.objects.create(product = product, quantity = quantity, shop = shop)
