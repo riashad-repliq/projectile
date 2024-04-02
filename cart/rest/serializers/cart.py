@@ -14,7 +14,7 @@ class ManageCartItemSerializer(DynamicFieldsModelSerializer):
     cart_item_total_price = serializers.SerializerMethodField()
     class Meta:
         model = CartItem
-        fields = ['uuid', 'product', 'quantity', 'cart_item_total_price']
+        fields = ['uuid', 'product', 'quantity', 'cart_item_total_price', 'selected']
 
     def get_cart_item_total_price(self, obj):
         return obj.calculate_price()

@@ -31,7 +31,7 @@ class Order(models.Model):
 
 
     def __str__(self):
-        return f"Order no {self.order_unique_id}"
+        return f"Order no {self.uuid}"
 
 
 class OrderItem(models.Model):

@@ -1,7 +1,7 @@
 from django.urls import path, include
 
 urlpatterns = [
-    path('/me/order', include('order.rest.urls.order')),
+    path('/me/orders', include('order.rest.urls.order')),
 
 
 ]
