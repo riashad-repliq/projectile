@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     'core',
     'shop',
     'product',
-    'image',
     'cart',
     'order',
 
@@ -66,7 +65,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'project',
+        'NAME': 'demo-project',
         'USER': 'riashad',
         'PASSWORD': 'riashad',
 

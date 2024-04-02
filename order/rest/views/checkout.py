@@ -22,7 +22,7 @@
 #     def cart_checkout_order(self, request):
 #         serializer = OrderSerializer(data=request.data)
 #         serializer.is_valid(raise_exception=True)
-#         order = serializer.save(customer= request.user)
+#         order = serializer.save(user= request.user)
 
 
 #     def direct_order(self, request):
@@ -32,6 +32,6 @@
 #         shop_product = get_object_or_404(ShopProduct, uuid = shop_product_uuid)
 #         quantity = serializer.validated_data['quantity']
 #         total_price = shop_product.product.price * quantity
-#         order = Order.objects.create(customer=request.user, total_amount=total_price, delivery_status='pending')
+#         order = Order.objects.create(user=request.user, total_amount=total_price, delivery_status='pending')
 
 #         OrderItem.objects.create(order=order, quantity=quantity, price=total_price)

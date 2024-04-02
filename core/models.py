@@ -37,7 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     phone_number=PhoneNumberField(unique=True)
     username = models.CharField(max_length=255)
-    profile_image = VersatileImageField()
+    profile_image = VersatileImageField(null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add = True)
     updated_on = models.DateTimeField(auto_now_add = True)
     is_active = models.BooleanField(default=True)
@@ -48,5 +48,5 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'phone_number'
 
     def __str__(self):
-        return self.username
+        return str(self.phone_number)
 

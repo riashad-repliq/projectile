@@ -9,7 +9,7 @@ from autoslug import AutoSlugField
 User = get_user_model()
 class Shop (models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    slug = AutoSlugField(populate_from = 'name')
+    slug = AutoSlugField(populate_from = 'name', unique = True)
     name = models.CharField(max_length=100, unique=True)
     location = models.CharField(max_length=255)
 

@@ -9,7 +9,7 @@ from cart.rest.serializers.cart import CartSerializer
 from cart.rest.serializers.cart import ManageCartItemSerializer, ListCreateCartItemSerializer
 
 class CartDetailView(RetrieveAPIView):
-    queryset = Cart.objects.filter()
+
     serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
 
@@ -31,6 +31,7 @@ class CartItemListCreateView(ListCreateAPIView):
 class ManageCartItemView(RetrieveUpdateDestroyAPIView):
     serializer_class = ManageCartItemSerializer
     permission_classes = [IsAuthenticated]
+    queryset= CartItem.objects.filter()
 
     def get_object(self):
         cart_item_uuid = self.kwargs.get('cart_item_uuid')

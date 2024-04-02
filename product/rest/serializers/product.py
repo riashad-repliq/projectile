@@ -5,19 +5,24 @@ from rest_framework import serializers
 
 from common.helper import DynamicFieldsModelSerializer
 
-from product.models import *
+from product.models import Product
 
-from product.rest.serializers.tags import TagSerializer, TaggedShopProductSerializer
-
-class NewProductSerializer(serializers.ModelSerializer):
-    quantity = serializers.IntegerField(write_only=True)
-
+"""Public Product Serializers"""
+class ProductSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'product_profile_image', 'quantity']
+        fields = ['uuid','slug', 'name', 'description', 'price','product_profile_image', 'quantity' ]
 
-    def create(self, validated_data):
-        quantity = validated_data.pop('quantity')
-        product = Product.objects.create(**validated_data)
 
-        return product
+
+"""Private Product Serializers"""
+class ListCreateProductSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['uuid', 'name', 'description', 'price','product_profile_image', 'quantity']
+
+
+class ManageProductSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['uuid', 'name', 'description', 'price', 'quantity']

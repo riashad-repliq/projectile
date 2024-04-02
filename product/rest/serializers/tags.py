@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from product.models import Tag, TaggedShopProduct
+from product.models import Tag, TaggedProduct
 
 from common.helper import DynamicFieldsModelSerializer
 
@@ -14,7 +14,7 @@ class TagSerializer(DynamicFieldsModelSerializer):
 class TaggedShopProductSerializer(DynamicFieldsModelSerializer):
     name = serializers.SerializerMethodField()
     class Meta:
-        model = TaggedShopProduct
+        model = TaggedProduct
         fields = ['name']
 
     def get_name(self, obj):
