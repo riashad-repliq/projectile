@@ -34,7 +34,6 @@ class Member(models.Model):
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name = 'members')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     member_type = models.CharField(max_length=50, choices = members)
-    # is_default= models.BooleanField(default=False)
 
     class Meta:
         #so that one user can be associated with only one membership_type of any store

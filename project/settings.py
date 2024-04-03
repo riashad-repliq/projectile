@@ -1,5 +1,6 @@
+import os
 from pathlib import Path
-
+from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-rm2$08sh%6i4phd_583a&8+@xb9ngvmh33&mrxk=^$)evmk6&m'
@@ -22,6 +23,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'versatileimagefield',
     'phonenumber_field',
+
     'core',
     'shop',
     'product',
@@ -93,8 +95,14 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=59)
+}
+
 
 SILENCED_SYSTEM_CHECKS = ['urls.W002', 'security.W019']
 
@@ -116,6 +124,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
 
-REST_FRAMEWORK= {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
+
+MEDIA_URL= '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

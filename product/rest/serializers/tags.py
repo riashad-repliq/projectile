@@ -10,12 +10,3 @@ class TagSerializer(DynamicFieldsModelSerializer):
         fields =['name']
 
 
-
-class TaggedShopProductSerializer(DynamicFieldsModelSerializer):
-    name = serializers.SerializerMethodField()
-    class Meta:
-        model = TaggedProduct
-        fields = ['name']
-
-    def get_name(self, obj):
-        return obj.tag.name

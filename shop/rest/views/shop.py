@@ -1,6 +1,6 @@
 from rest_framework.generics import   ListAPIView , RetrieveAPIView,  ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from django.shortcuts import render
-from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from common.permissions.shop import *
 
 from shop.models import Shop, Member
@@ -11,16 +11,17 @@ from shop.rest.serializers.shop import PublicShopSerializer, PrivateShopSerializ
 class ShopListCreateView(ListCreateAPIView):
     serializer_class = PublicShopSerializer
     queryset = Shop.objects.filter()
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def perform_create(self, serializer):
         shop= serializer.save()
 
         user = self.request.user
-        member = Member.objects.create(shop =shop, user = user, member_type ='owner')
+        Member.objects.create(shop =shop, user = user, member_type ='owner')
 
 class RetrieveShopView(RetrieveAPIView):
     serializer_class = PublicShopSerializer
+    authentication_classes = [JWTAuthentication]
 
     def get_object(self):
         shop_slug = self.kwargs.get('shop_slug')
@@ -31,7 +32,7 @@ class RetrieveShopView(RetrieveAPIView):
 
 class ListShopView(ListAPIView):
     serializer_class = ListShopSerializer
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
         user = self.request.user
@@ -42,8 +43,10 @@ class ListShopView(ListAPIView):
 
 class ManageShopView(RetrieveUpdateDestroyAPIView):
     serializer_class = PrivateShopSerializer
-    permission_classes= [ShopPermission]
     queryset = Shop.objects.filter()
+    # authentication_classes = [JWTAuthentication]
+    permission_classes= [ShopPermission]
+
     def get_object(self):
         shop_uuid = self.kwargs.get('shop_uuid')
         shop = get_object_or_404(Shop, uuid=shop_uuid)

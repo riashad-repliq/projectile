@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from shop.models import Shop
@@ -10,6 +12,7 @@ from common.permissions.shop import ShopPermission
 
 class ListProductView(ListAPIView):
     serializer_class = ProductSerializer
+    authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
         shop_slug= self.kwargs.get('shop_slug')
@@ -26,6 +29,9 @@ class ListProductView(ListAPIView):
 
 class RetrieveProductView(RetrieveAPIView):
     serializer_class = ProductSerializer
+    authentication_classes = [JWTAuthentication]
+
+
 
     def get_object(self):
         shop_slug = self.kwargs.get('shop_slug')
@@ -67,6 +73,7 @@ class ListCreateProductView(ListCreateAPIView):
 class ManageProductView(RetrieveUpdateDestroyAPIView):
     serializer_class = ManageProductSerializer
     queryset = Product.objects.filter()
+    # authentication_classes = [JWTAuthentication]
     permission_classes = [ShopPermission]
 
     def get_object(self):

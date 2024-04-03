@@ -1,7 +1,5 @@
 """Keep custom functions in this module to import in others"""
 
-import uuid
-from django.db import models
 from rest_framework import serializers
 
 
