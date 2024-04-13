@@ -16,10 +16,8 @@ class ListProductView(ListAPIView):
 
     def get_queryset(self):
         shop_slug= self.kwargs.get('shop_slug')
-        try:
-            shop = get_object_or_404(Shop, slug=shop_slug)
-        except:
-            raise NotFound(detail="No such shop exists.")
+
+        shop = get_object_or_404(Shop, slug=shop_slug)
 
         products = Product.objects.filter(shop=shop)
         if not products:
@@ -73,7 +71,6 @@ class ListCreateProductView(ListCreateAPIView):
 class ManageProductView(RetrieveUpdateDestroyAPIView):
     serializer_class = ManageProductSerializer
     queryset = Product.objects.filter()
-    # authentication_classes = [JWTAuthentication]
     permission_classes = [ShopPermission]
 
     def get_object(self):

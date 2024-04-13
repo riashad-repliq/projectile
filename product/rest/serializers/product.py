@@ -1,81 +1,107 @@
 from rest_framework import serializers
-
+from django.shortcuts import get_object_or_404
 
 from common.helper import DynamicFieldsModelSerializer
 
-from product.models import Product, Image, Tag
+from product.models import Product, Image, Inventory, ProductInventory
 from product.rest.serializers.image import ImageSerializer
-from product.rest.serializers.tags import TagSerializer
 
 """Public Product Serializers"""
 class ProductSerializer(DynamicFieldsModelSerializer):
     images = ImageSerializer(many=True, required=False)
     class Meta:
         model = Product
-        fields = ['uuid','slug', 'name', 'description', 'price','product_profile_image', 'quantity', 'images' ]
+        fields = ['uuid','slug', 'name', 'description', 'price','product_profile_image', 'images' ]
 
 
 
 """Private Product Serializers"""
+class ProductInventorySerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = ProductInventory
+        fields = ['quantity']
 
 class ListCreateProductSerializer(DynamicFieldsModelSerializer):
-    images = serializers.ListField(child=serializers.ImageField(), required=False, write_only= True)
+    images = serializers.ListField(child=serializers.ImageField(), required=False)
+    quantity = serializers.IntegerField(required=False)
 
     class Meta:
         model = Product
-        fields = ['uuid', 'name', 'description', 'price', 'product_profile_image', 'quantity', 'images', 'tags']
+        fields = ['uuid', 'name', 'description', 'price', 'product_profile_image', 'images', 'quantity']
 
-    def tags(self, tags, product):
-        """Handle getting or creating tags as needed."""
-        for tag in tags:
-            tag_obj, created = Tag.objects.get_or_create(**tag)
-            product.tags.add(tag_obj)
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if 'quantity' not in data:
+            try:
+                product_inventory = ProductInventory.objects.get(product=instance)
+                data['quantity'] = product_inventory.quantity
+            except ProductInventory.DoesNotExist:
+                data['quantity'] = None
+        return data
 
     def create(self, validated_data):
         images = validated_data.pop('images', [])
-        tags = validated_data.pop('tags', [])
-
-
+        quantity = validated_data.pop('quantity', None)
         product = Product.objects.create(**validated_data)
-        self.tags(tags, product)
+        shop = product.shop
+
+        if quantity is not None:
+            shop_inventory, _ = Inventory.objects.get_or_create(shop=shop)
+            ProductInventory.objects.create(inventory=shop_inventory, product=product, quantity=quantity)
+
         for image in images:
             Image.objects.create(product=product, image=image)
 
         return product
 
 
-# class ManageProductSerializer(DynamicFieldsModelSerializer):
-#     images = ImageSerializer(many=True, required=False)
-#     class Meta:
-#         model = Product
-#         fields = ['uuid', 'name', 'description', 'product_profile_image','price', 'quantity', 'images']
 
 class ManageProductSerializer(DynamicFieldsModelSerializer):
-    images = ImageSerializer(many=True, required=False)
-    tags = TagSerializer(many=True, required=False)
+    images = ImageSerializer(many=True, required=False, source='image_set')
+    quantity = serializers.IntegerField(source='productinventory.quantity', required=False)
 
     class Meta:
         model = Product
-        fields = ['uuid', 'name', 'description', 'product_profile_image', 'price', 'quantity', 'tags' ,'images']
+        fields = ['uuid', 'name', 'description', 'product_profile_image', 'price', 'quantity', 'images']
+
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if 'quantity' not in data:
+            try:
+                product_inventory = ProductInventory.objects.get(product=instance)
+                data['quantity'] = product_inventory.quantity
+            except ProductInventory.DoesNotExist:
+                data['quantity'] = None
+        return data
 
     def update(self, instance, validated_data):
+        quantity = validated_data.pop('quantity', None)
         images_data = validated_data.pop('images', [])
-        images_serializer = self.fields['images']
+
 
         # Update product fields
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
-        instance.save()
 
         # Update or create images
         for image_data in images_data:
-            image_id = image_data.get('id', None)
-            if image_id:
-                image_instance = instance.images.filter(id=image_id).first()
-                if image_instance:
-                    images_serializer.update(image_instance, image_data)
+            image_instance = Image.objects.filter(product=instance, id=image_data.get('id')).first()
+            if image_instance:
+                image_instance.image = image_data.get('image', image_instance.image)
+                image_instance.save()
             else:
-                image_data['product'] = instance.id
-                images_serializer.create(image_data)
+                Image.objects.create(product=instance, **image_data)
+
+        # Save the instance after updating product fields and images
+        instance.save()
+
+        # Update quantity if provided
+        if quantity is not None:
+            product_inventory, _ = ProductInventory.objects.get_or_create(product=instance)
+            product_inventory.quantity = quantity
+            product_inventory.save()
+        else:
+            raise serializers.ValidationError("A quantity must be specified")
 
         return instance

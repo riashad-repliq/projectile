@@ -23,11 +23,10 @@ class PublicShopSerializer(DynamicFieldsModelSerializer):
 """Private Serializers"""
 
 class ListShopSerializer(serializers.ModelSerializer):
-    member_type = serializers.CharField(source='members__member_type', read_only=True)
 
     class Meta:
         model = Shop
-        fields = ['uuid', 'name', 'location', 'member_type']
+        fields = ['uuid', 'name']
 
 
 class PrivateShopSerializer(DynamicFieldsModelSerializer):

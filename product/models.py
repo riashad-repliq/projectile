@@ -16,32 +16,47 @@ class Product(models.Model):
     description = models.TextField(blank=True, null= True)
     product_profile_image = VersatileImageField(blank=True, null= True, upload_to= 'images/product_profile')
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    quantity = models.PositiveIntegerField(default=1)
-    tags = models.ManyToManyField('Tag')
+    inventory = models.ManyToManyField('Inventory', through='ProductInventory', related_name='product_inventory')
+
     def __str__(self):
         return self.name
 
 class Image(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = VersatileImageField(blank=True, null= True, upload_to='images/')
 
     def __str__(self):
         return f"image of {self.product.name}"
 
 
+class Inventory(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    shop = models.OneToOneField(Shop, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Inventory of {self.shop.name}"
+
+
+class ProductInventory(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    inventory= models.ForeignKey(Inventory, on_delete=models.CASCADE, related_name='inventory_items')
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.quantity} left of {self.product.name}'
+
 
 class Tag(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    name = models.CharField(max_length= 30, unique=True)
+    name = models.CharField(max_length=255)
 
-    def __str__(self):
-        return self.name
 
-class TaggedProduct(models.Model):
+class ProductTag(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    product = models.ForeignKey(Product, on_delete= models.CASCADE, related_name="product_tags")
-    tag = models.ForeignKey(Tag, on_delete= models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='tags')
 
-    def __str__(self):
-        return f'{self.product.name} tagged with {self.tag.name}'
+    class Meta:
+        unique_together = ('tag', 'product')
