@@ -11,7 +11,7 @@ User = get_user_model()
 class Shop (models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     slug = AutoSlugField(populate_from = 'name', unique = True)
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     location = models.CharField(max_length=255)
 
     def save(self, *args, **kwargs):
@@ -42,4 +42,4 @@ class Member(models.Model):
         unique_together = ('shop', 'user')
 
     def __str__(self):
-        return f'{self.member_type} at {self.shop}'
+        return f'{self.member_type} at {self.shop} - {self.user.username}'

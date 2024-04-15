@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 from common.permissions.shop import *
@@ -36,13 +35,7 @@ class ManageShopMemberView(RetrieveUpdateDestroyAPIView):
     permission_classes = [ShopPermission]
 
     def get_object(self):
-
         member_uuid = self.kwargs.get('member_uuid', None)
-
-        try:
-            member = get_object_or_404(Member,uuid=member_uuid)
-        except Member.DoesNotExist:
-            raise NotFound(detail="Member does not exist")
-
+        member = get_object_or_404(Member,uuid=member_uuid)
 
         return member

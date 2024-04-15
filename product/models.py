@@ -1,12 +1,14 @@
 import uuid
-
 from django.db import models
+
+from django.contrib.auth import get_user_model
 
 from versatileimagefield.fields import VersatileImageField
 from autoslug import AutoSlugField
 
 from shop.models import Shop
 
+User = get_user_model()
 class Product(models.Model):
 
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -16,10 +18,10 @@ class Product(models.Model):
     description = models.TextField(blank=True, null= True)
     product_profile_image = VersatileImageField(blank=True, null= True, upload_to= 'images/product_profile')
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    inventory = models.ManyToManyField('Inventory', through='ProductInventory', related_name='product_inventory')
 
     def __str__(self):
         return self.name
+
 
 class Image(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -41,7 +43,7 @@ class Inventory(models.Model):
 class ProductInventory(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     inventory= models.ForeignKey(Inventory, on_delete=models.CASCADE, related_name='inventory_items')
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='inventory')
     quantity = models.IntegerField(default=1)
 
     def __str__(self):
@@ -60,3 +62,25 @@ class ProductTag(models.Model):
 
     class Meta:
         unique_together = ('tag', 'product')
+
+
+class CustomerReview(models.Model):
+    RATING_STAR_CHOICES = [
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+    ]
+
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_ratings')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings')
+    rating = models.IntegerField(choices=RATING_STAR_CHOICES)
+    review = models.TextField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+
+    def __str__(self):
+        return f"{self.product.name} - {self.user.username}"

@@ -1,8 +1,11 @@
 from rest_framework.generics import   ListAPIView , RetrieveAPIView,  ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.filters import SearchFilter
+
 from product.models import Inventory
 
 from common.permissions.shop import *
+from common.pagination.shop import ShopListPagination
 
 from shop.models import Shop, Member
 from shop.rest.serializers.shop import PublicShopSerializer, PrivateShopSerializer, ListShopSerializer
@@ -12,7 +15,12 @@ from shop.rest.serializers.shop import PublicShopSerializer, PrivateShopSerializ
 class ShopListCreateView(ListCreateAPIView):
     serializer_class = PublicShopSerializer
     queryset = Shop.objects.filter()
+    filter_backends = [SearchFilter]
+    search_fields = ['name', 'location']
+
     authentication_classes = [JWTAuthentication]
+    pagination_class = ShopListPagination
+
 
     def perform_create(self, serializer):
         shop= serializer.save()

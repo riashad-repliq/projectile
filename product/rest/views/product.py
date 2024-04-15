@@ -6,7 +6,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIV
 from shop.models import Shop
 from product.models import Product
 from product.rest.serializers.product import ProductSerializer, ManageProductSerializer, ListCreateProductSerializer
-from common.permissions.shop import ShopPermission
+from common.permissions.shop import ShopPermission, ProductPermission
 
 """PUBLIC PRODUCT VIEWS"""
 
@@ -33,24 +33,16 @@ class RetrieveProductView(RetrieveAPIView):
 
     def get_object(self):
         shop_slug = self.kwargs.get('shop_slug')
-        try:
-            shop = get_object_or_404(Shop, slug=shop_slug)
-        except:
-            raise NotFound(detail="No such shop exists.")
-
+        shop = get_object_or_404(Shop, slug=shop_slug)
         product_slug = self.kwargs.get('product_slug')
-        try:
-            product = get_object_or_404(Product, slug=product_slug)
-        except:
-            raise NotFound(detail="No such product exists.")
-
+        product = get_object_or_404(Product, slug=product_slug)
         return product
 
 """PRIVATE PRODUCT VIEWS"""
 
 class ListCreateProductView(ListCreateAPIView):
     serializer_class = ListCreateProductSerializer
-    permission_classes = [ShopPermission]
+    permission_classes = [ProductPermission]
 
     def get_queryset(self):
         shop_uuid = self.kwargs.get('shop_uuid')
@@ -71,12 +63,12 @@ class ListCreateProductView(ListCreateAPIView):
 class ManageProductView(RetrieveUpdateDestroyAPIView):
     serializer_class = ManageProductSerializer
     queryset = Product.objects.filter()
-    permission_classes = [ShopPermission]
+    permission_classes = [ProductPermission]
 
     def get_object(self):
+        """shop retrieval is done through the permission class"""
+
         product_uuid = self.kwargs.get('product_uuid')
         product = get_object_or_404(Product, uuid=product_uuid)
-        if not product:
-            raise NotFound(detail="product does not exist")
-
         return product
+
