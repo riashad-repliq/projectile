@@ -9,8 +9,8 @@ from cart.models import *
 #     # member, created = member.objects.get_or_create(shop = shop , user = user , member_type = 'staff' )
 
 #     print(shop.members.all())
-
+from faker import Faker
 def run():
-    user = User.objects.create_user(phone_number=+8801234567323, username = "ris", password= 'riashad')
+    fake = Faker()
 
-    print (user)
+    print(type(fake.word()))
