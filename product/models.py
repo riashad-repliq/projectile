@@ -50,19 +50,6 @@ class ProductInventory(models.Model):
         return f'{self.quantity} left of {self.product.name}'
 
 
-class Tag(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    name = models.CharField(max_length=255)
-
-
-class ProductTag(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='tags')
-
-    class Meta:
-        unique_together = ('tag', 'product')
-
 
 class CustomerReview(models.Model):
     RATING_STAR_CHOICES = [
