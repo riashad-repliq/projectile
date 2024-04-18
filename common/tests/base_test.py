@@ -5,6 +5,7 @@ from rest_framework import status
 
 from core.rest.tests import payloads, urlhelpers
 
+
 User= get_user_model()
 
 class BaseTest(APITestCase):
@@ -30,3 +31,6 @@ class BaseTest(APITestCase):
         self.client.credentials(
             HTTP_AUTHORIZATION = 'Bearer' + self.user_login.data['access']
         )
+        self.client.force_authenticate(user=self.user)
+
+

@@ -101,6 +101,8 @@ class ManageProductSerializer(DynamicFieldsModelSerializer):
         instance.product_profile_image = validated_data.get(
             'product_profile_image',
             instance.product_profile_image)
+        instance.price = validated_data.get('price', instance.price)
+
 
         # for image_data in images_data:
         #     image_instance = Image.objects.filter(product=instance, id=image_data.get('id')).first()

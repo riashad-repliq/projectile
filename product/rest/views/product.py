@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from shop.models import Shop
@@ -49,9 +50,6 @@ class ListCreateProductView(ListCreateAPIView):
         shop = get_object_or_404(Shop, uuid=shop_uuid)
 
         products = Product.objects.filter(shop=shop)
-        if not products:
-            raise NotFound(detail="This shop does not have any products")
-
         return products
 
     def perform_create(self, serializer):

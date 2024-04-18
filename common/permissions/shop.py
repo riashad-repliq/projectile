@@ -1,21 +1,12 @@
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import PermissionDenied
-
 
 from rest_framework import permissions
-from rest_framework.exceptions import NotFound
+
+from common.permissions.helper import CustomGetObjectOr404
 from shop.models import Shop,Member
 
 
-class CustomGetObjectOr404:
-    @classmethod
-    def get_object_or_404(cls, klass, *args, **kwargs):
-        manager = klass._default_manager if hasattr(klass, '_default_manager') else klass.objects
-        queryset = manager.get_queryset()
-        try:
-            return queryset.get(*args, **kwargs)
-        except queryset.model.DoesNotExist:
-            raise PermissionDenied("Permission Denied")
+
 
 
 class ShopPermission(permissions.BasePermission):
@@ -27,29 +18,15 @@ class ShopPermission(permissions.BasePermission):
         shop =get_object_or_404(Shop,uuid=shop_uuid)
 
         member = CustomGetObjectOr404.get_object_or_404(Member,user=request.user, shop=shop)
-        # try:
-        #     member =Member.objects.get(shop=shop, user=request.user)
-        # except:
-        #     return False
 
         if member.member_type == 'owner':
             return True
 
         elif member.member_type == 'admin':
-            if request.method in ['POST', 'PATCH'] and 'member_type' in request.data:
-                return request.data['member_type'] in ['manager', 'staff']
+            return request.method != 'DELETE'
 
-
-        elif member.member_type == 'manager':
-            if request.method in ['POST', 'PATCH'] and 'member_type' in request.data:
-                return request.data['member_type'] in ['staff']
-            # return request.method in ['GET', 'PUT', 'PATCH', 'POST']
-
-
-        elif member.member_type == 'staff':
+        elif member.member_type in ['manager', 'staff']:
             return request.method == 'GET'
-
-        return request.method in ['GET', 'PUT', 'PATCH', 'POST']
 
 
 
@@ -66,6 +43,7 @@ class DefaultShopPermission(permissions.BasePermission):
 
         elif member.member_type in ['admin', 'manager']:
             return request.method != 'DELETE'
+
         elif member.member_type == 'staff':
             return request.method == 'GET'
 
@@ -86,4 +64,9 @@ class ProductPermission(permissions.BasePermission):
 
         elif member.member_type == 'staff':
             return request.method == 'GET'
+
+
+
+
+
 

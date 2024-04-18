@@ -9,8 +9,11 @@ from cart.models import *
 #     # member, created = member.objects.get_or_create(shop = shop , user = user , member_type = 'staff' )
 
 #     print(shop.members.all())
+import random
 from faker import Faker
 def run():
-    fake = Faker()
+    faker = Faker()
+    random = faker.random_int(min=1, max=222)
+    formatted_float = "{:.2f}".format(random)
 
-    print(type(fake.word()))
+

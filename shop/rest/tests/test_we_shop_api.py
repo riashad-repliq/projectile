@@ -24,7 +24,7 @@ class WeShopTest(BaseTest):
     def test_get_shop_details(self):
 
         uuid = self.shop.uuid
-
+        self.client.force_authenticate(user=self.user)
         response = self.client.get(urlhelpers.we_update_delete_shop_url(shop_uuid=uuid))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
