@@ -24,20 +24,12 @@ class OrderSerializer(DynamicFieldsModelSerializer):
         fields = ['uuid', 'total_amount', 'order_date', 'delivery_status', 'order_items']
 
 
-class CreateOrderSerializer(serializers.Serializer):
-    total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    delivery_status = serializers.CharField(max_length=100, read_only=True)
+class CreateOrderSerializer(serializers.ModelSerializer):
 
-class CustomerReviewSerializer(DynamicFieldsModelSerializer):
     class Meta:
-        model = CustomerReview
-        fields = ['uuid', 'rating', 'review']
+        model = Order
+        fields = ['uuid', 'total_amount', 'delivery_status', 'order_date']
 
-
-class CustomerReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomerReview
-        fields = ['rating', 'review']
 
 class OrderItemReviewSerializer(serializers.ModelSerializer):
     product = serializers.UUIDField(source='product.uuid', required= False)
@@ -73,16 +65,12 @@ class OrderItemReviewSerializer(serializers.ModelSerializer):
         if rating_data is not None:
             instance.product.ratings.update_or_create(
                 defaults={'rating': rating_data},
-                user=self.context['request'].user,
-                # product= instance.product
-                )
+                user=self.context['request'].user )
 
         if review_data is not None:
             instance.product.ratings.update_or_create(
                 defaults={'review': review_data},
-                user=self.context['request'].user,
-                # product= instance.product
-                )
+                user=self.context['request'].user)
 
         return instance
 

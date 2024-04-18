@@ -30,8 +30,8 @@ class ProductTest(BaseTest):
 
         # print(json.dumps(response.data, indent=4))
         product = Product.objects.get(uuid=response.data['uuid'])
-
         return product
+
     def test_list_products(self):
 
         response = self.client.get(urlhelpers.product_create_url(self.shop.uuid))

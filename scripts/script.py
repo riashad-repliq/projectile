@@ -13,7 +13,6 @@ import random
 from faker import Faker
 def run():
     faker = Faker()
-    random = faker.random_int(min=1, max=222)
-    formatted_float = "{:.2f}".format(random)
+    print(faker.uuid4())
 
 

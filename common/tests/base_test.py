@@ -5,6 +5,7 @@ from rest_framework import status
 
 from core.rest.tests import payloads, urlhelpers
 
+from cart.models import Cart
 
 User= get_user_model()
 
@@ -19,6 +20,7 @@ class BaseTest(APITestCase):
             password = self.user_payload['password'],
             username = self.user_payload['username']
         )
+        Cart.objects.create(user=self.user)
 
         login_data = {
             'phone_number': self.user_payload['phone_number'],
