@@ -14,3 +14,8 @@ def member_create_payload():
         'member_type': ''
     }
 
+def member_update_payload():
+    return{
+        'member_type': ''
+    }
+

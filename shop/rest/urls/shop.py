@@ -1,7 +1,7 @@
 from django.urls import path
 from shop.rest.views.shop import *
 urlpatterns = [
-    path('/we', ShopView.as_view(), name='last-visited-shops'),
+    path('/we', ShopView.as_view(), name='last-visited-shop'),
     path('/we/shops', ListShopView.as_view(), name='own-shops'),
 
     path('/we/shops/<uuid:shop_uuid>', ManageShopView.as_view(), name='manage-shop'),

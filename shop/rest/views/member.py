@@ -1,14 +1,12 @@
 from django.shortcuts import get_object_or_404
 
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
-
-from common.permissions.shop import ShopPermission
 from common.permissions.member import MemberPermission
 
 from shop.models import Shop, Member
 from shop.rest.serializers.member import ListCreateMemberSerializer, ManageMemberSerializer
-from rest_framework.exceptions import NotFound
 
 
 class ShopMemberListCreateView(ListCreateAPIView):

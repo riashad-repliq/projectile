@@ -67,12 +67,13 @@ class ListCreateProductSerializer(DynamicFieldsModelSerializer):
 
 
 class ManageProductSerializer(DynamicFieldsModelSerializer):
-    quantity = serializers.IntegerField(required=False)
+    quantity = ProductInventorySerializer(source = 'productinventory', required=False , read_only=True)
     avg_rating = serializers.SerializerMethodField()
-    # images = ImageSerializer(many=True, required=False, source='image_set')
+    images = ImageSerializer(many=True, required=False, source='image_set', read_only=True)
+
     class Meta:
         model = Product
-        fields = ['uuid', 'name', 'description', 'product_profile_image', 'price', 'quantity', 'avg_rating']
+        fields = ['uuid', 'name', 'description', 'product_profile_image', 'price', 'avg_rating', 'quantity', 'images']
 
     def get_avg_rating(self, obj):
         ratings = CustomerReview.objects.filter(product=obj)
@@ -80,46 +81,14 @@ class ManageProductSerializer(DynamicFieldsModelSerializer):
             return ratings.aggregate(Avg('rating'))['rating__avg']
         return None
 
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if 'quantity' not in data:
-            try:
-                product_inventory = ProductInventory.objects.get(product=instance)
-                data['quantity'] = product_inventory.quantity
-            except ProductInventory.DoesNotExist:
-                data['quantity'] = None
-        return data
-
-    def update(self, instance, validated_data):
-        product_inventory = ProductInventory.objects.get(product=instance)
-        quantity = validated_data.pop('quantity', product_inventory.quantity)
-        # images_data = validated_data.pop('images', [])
-
+def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
         instance.product_profile_image = validated_data.get(
             'product_profile_image',
             instance.product_profile_image)
-        instance.price = validated_data.get('price', instance.price)
-
-
-        # for image_data in images_data:
-        #     image_instance = Image.objects.filter(product=instance, id=image_data.get('id')).first()
-        #     if image_instance:
-        #         image_instance.image = image_data.get('image', image_instance.image)
-        #         image_instance.save()
-        #     else:
-        #         Image.objects.create(product=instance, **image_data)
 
         instance.save()
 
-
-        if quantity is not None:
-            product_inventory, _ = ProductInventory.objects.get_or_create(product=instance)
-            product_inventory.quantity = quantity
-            product_inventory.save()
-        else:
-            raise serializers.ValidationError("A quantity must be specified")
-
         return instance
+

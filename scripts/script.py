@@ -12,7 +12,6 @@ from cart.models import *
 import random
 from faker import Faker
 def run():
-    faker = Faker()
-    print(faker.uuid4())
 
-
+    product = Product.objects.get(uuid = '66ca2e1d-25a9-4501-9aa6-adcea804e5ef')
+    print (product.productinventory.quantity)

@@ -43,6 +43,7 @@ class CartTest(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         print (json.dumps(response.data, indent=4, default=float))
 
+
 # ORDER TESTS
 
 

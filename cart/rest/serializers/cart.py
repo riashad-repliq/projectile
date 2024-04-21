@@ -7,7 +7,6 @@ from common.helper import DynamicFieldsModelSerializer
 from cart.models import Cart, CartItem
 from product.models import Product
 
-from product.rest.serializers.product import ProductSerializer
 
 class ManageCartItemSerializer(DynamicFieldsModelSerializer):
     product = serializers.UUIDField(source= 'product.uuid', read_only=True)

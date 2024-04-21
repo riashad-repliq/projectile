@@ -7,4 +7,4 @@ from product.models import Image
 class ImageSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Image
-        fields = ['image']
+        fields = ['uuid', 'image', 'farce']

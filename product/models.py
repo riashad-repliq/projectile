@@ -27,6 +27,7 @@ class Image(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = VersatileImageField(blank=True, null= True, upload_to='images/')
+    farce = models.CharField( max_length=50, blank= True)
 
     def __str__(self):
         return f"image of {self.product.name}"
@@ -42,8 +43,8 @@ class Inventory(models.Model):
 
 class ProductInventory(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    inventory= models.ForeignKey(Inventory, on_delete=models.CASCADE, related_name='inventory_items')
-    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='inventory')
+    inventory= models.ForeignKey(Inventory, on_delete=models.CASCADE)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 
     def __str__(self):

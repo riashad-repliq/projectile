@@ -1,10 +1,16 @@
 from django.urls import reverse
 
+"""CART APP URLS"""
+
 def get_user_cart():
     return reverse('cart-detail')
 
 def get_list_create_cart_items():
     return reverse('list-create-cart-items')
+
+
+"""ORDER APP URLS"""
+
 
 def order_list_url():
     return reverse('orders')
