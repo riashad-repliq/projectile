@@ -28,6 +28,7 @@ class Product(models.Model):
         ratings = CustomerReview.objects.filter(product=self)
         if ratings.exists():
             return ratings.aggregate(Avg('rating'))['rating__avg']
+        return None
 
 
 

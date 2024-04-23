@@ -16,10 +16,6 @@ class ProductSerializer(DynamicFieldsModelSerializer):
 
 
 """Private Product Serializers"""
-class ProductInventorySerializer(DynamicFieldsModelSerializer):
-    class Meta:
-        model = ProductInventory
-        fields = ['quantity']
 
 class ListCreateProductSerializer(DynamicFieldsModelSerializer):
     images = serializers.ListField(child=serializers.ImageField(), required=False)
@@ -95,11 +91,11 @@ class ManageProductSerializer(DynamicFieldsModelSerializer):
             else:
                     Image.objects.create(image=images_data, product=instance)
 
-        # delete_image_uuid= validated_data.get('delete_images_uuid', None)
-        # if delete_image_uuid:
-        #     image_to_delete= get_object_or_404(Image, uuid=delete_image_uuid)
-        #     image_to_delete.delete()
 
 
         return instance
 
+        # delete_image_uuid= validated_data.get('delete_images_uuid', None)
+        # if delete_image_uuid:
+        #     image_to_delete= get_object_or_404(Image, uuid=delete_image_uuid)
+        #     image_to_delete.delete()

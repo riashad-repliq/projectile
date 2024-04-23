@@ -30,8 +30,6 @@ class RetrieveProductView(RetrieveAPIView):
     serializer_class = ProductSerializer
     authentication_classes = [JWTAuthentication]
 
-
-
     def get_object(self):
         shop_slug = self.kwargs.get('shop_slug')
         shop = get_object_or_404(Shop, slug=shop_slug)
