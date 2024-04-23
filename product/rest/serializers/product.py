@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from versatileimagefield.serializers import VersatileImageFieldSerializer
@@ -36,7 +37,6 @@ class ListCreateProductSerializer(DynamicFieldsModelSerializer):
         shop = product.shop
 
         if quantity is not None:
-
             shop_inventory, _ = Inventory.objects.get_or_create(shop=shop)
             ProductInventory.objects.create(inventory=shop_inventory, product=product, quantity=quantity)
             print(shop_inventory)
@@ -54,17 +54,19 @@ class ListCreateProductSerializer(DynamicFieldsModelSerializer):
 class ManageProductSerializer(DynamicFieldsModelSerializer):
     quantity = serializers.IntegerField(source = 'productinventory.quantity', read_only=True)
     images = ImageSerializer(many=True, source='image_set', read_only=True)
-
     write_quantity = serializers.IntegerField(write_only=True, required=False)
-    image = serializers.ListField(
-        child=VersatileImageFieldSerializer(sizes='product_images'),
-        write_only=True, required=False)
+    image = serializers.ListField(child=VersatileImageFieldSerializer(sizes='product_images')
+                                  ,write_only=True, required=False)
+
+    delete_image_uuid = serializers.CharField(write_only=True, required=False)
+    update_image_uuid = serializers.CharField(write_only=True, required=False)
+    update_image = VersatileImageFieldSerializer(sizes='product_images',write_only=True, required=False)
 
     class Meta:
         model = Product
         fields = ['uuid', 'slug','name', 'description', 'product_profile_image',
                   'price','average_rating', 'quantity', 'images',
-                  'write_quantity', 'image'
+                  'write_quantity', 'image', 'delete_image_uuid', 'update_image_uuid', 'update_image'
                   ]
 
 
@@ -82,20 +84,26 @@ class ManageProductSerializer(DynamicFieldsModelSerializer):
             product_inventory.quantity = quantity
             product_inventory.save()
 
-        images_data = validated_data.get('image')
-        if images_data:
-            if isinstance(images_data, list):
-                for image_data in images_data:
 
-                    Image.objects.create(image=image_data, product=instance)
-            else:
-                    Image.objects.create(image=images_data, product=instance)
+        images_data = validated_data.pop('image', [])
+
+        for image_data in images_data:
+            Image.objects.create(image=image_data, product=instance)
 
 
+        delete_image_uuid= validated_data.get('delete_image_uuid', None)
+
+        if delete_image_uuid:
+            image_to_delete= get_object_or_404(Image, uuid=delete_image_uuid)
+            image_to_delete.delete()
+
+
+        update_image_uuid= validated_data.get('update_image_uuid', None)
+        update_image = validated_data.pop('update_image', None)
+
+        if update_image_uuid and update_image:
+            image_to_update= get_object_or_404(Image, uuid=update_image_uuid)
+            image_to_update.image = update_image
+            image_to_update.save()
 
         return instance
-
-        # delete_image_uuid= validated_data.get('delete_images_uuid', None)
-        # if delete_image_uuid:
-        #     image_to_delete= get_object_or_404(Image, uuid=delete_image_uuid)
-        #     image_to_delete.delete()
