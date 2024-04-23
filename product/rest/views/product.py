@@ -70,17 +70,3 @@ class ManageProductView(RetrieveUpdateDestroyAPIView):
         product = get_object_or_404(Product, uuid=product_uuid)
         return product
 
-    def perform_update(self, serializer,*args, **kwargs):
-
-        instance = serializer.save()
-
-        if 'image' in self.request.data:
-            data_set = self.request.data.getlist('image')
-            print(data_set)
-            for image in data_set:
-                Image.objects.create(image=image, product=instance)
-
-        if 'quantity' in self.request.data:
-            product_inventory = get_object_or_404(ProductInventory, product=instance)
-            product_inventory.quantity = self.request.data.get('quantity')['quantity']
-            product_inventory.save()

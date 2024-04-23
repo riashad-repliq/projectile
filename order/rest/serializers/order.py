@@ -56,7 +56,8 @@ class OrderItemReviewSerializer(serializers.ModelSerializer):
 
 
     def update(self, instance, validated_data):
-        if not instance.order.delivery_status == 'pending':
+
+        if instance.order.delivery_status != 'Delivered':
             raise serializers.ValidationError("Order must be delivered first")
 
         rating_data = validated_data.pop('rating', None)

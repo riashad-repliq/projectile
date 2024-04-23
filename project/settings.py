@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'drf_spectacular',
     'rest_framework',
     'django_extensions',
@@ -96,10 +97,6 @@ REST_FRAMEWORK = {
 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
-    # 'DEFAULT_PAGINATION_CLASS':
-    #     'rest_framework.pagination.PageNumberPagination',
-    #     'PAGE_SIZE': 1
-    # ,
 }
 
 SIMPLE_JWT = {
@@ -107,6 +104,13 @@ SIMPLE_JWT = {
 }
 
 
+VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
+    'product_images': [
+        ('thumbnail', 'crop__100x100'),
+        ('medium', 'crop__300x200'),
+        ('large', 'crop__600x400'),
+    ],
+}
 SILENCED_SYSTEM_CHECKS = ['urls.W002', 'security.W019']
 
 

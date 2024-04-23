@@ -1,25 +1,18 @@
-from django.db.models import Avg
-
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from common.helper import DynamicFieldsModelSerializer
 
-from product.models import Product, Image, Inventory, ProductInventory, CustomerReview
+from product.models import Product, Image, Inventory, ProductInventory
 from product.rest.serializers.image import ImageSerializer
 
 """Public Product Serializers"""
 class ProductSerializer(DynamicFieldsModelSerializer):
-    images = ImageSerializer(many=True, required=False)
-    avg_rating = serializers.SerializerMethodField()
+    images = ImageSerializer(many=True, source='image_set' ,required=False)
     class Meta:
         model = Product
-        fields = ['uuid','slug', 'name', 'description', 'price','product_profile_image','avg_rating', 'images' ]
-
-    def get_avg_rating(self, obj):
-        ratings = CustomerReview.objects.filter(product=obj)
-        if ratings.exists():
-            return ratings.aggregate(Avg('rating'))['rating__avg']
-        return None
+        fields = ['uuid','slug', 'name', 'description', 'price','product_profile_image','average_rating', 'images' ]
 
 
 """Private Product Serializers"""
@@ -30,31 +23,27 @@ class ProductInventorySerializer(DynamicFieldsModelSerializer):
 
 class ListCreateProductSerializer(DynamicFieldsModelSerializer):
     images = serializers.ListField(child=serializers.ImageField(), required=False)
-    quantity = serializers.IntegerField(required=False)
+    quantity = serializers.IntegerField(source='productinventory.quantity', read_only=True)
+    write_quantity = serializers.IntegerField(required=False, write_only=True)
 
     class Meta:
         model = Product
-        fields = ['uuid', 'name', 'description', 'price', 'product_profile_image', 'images', 'quantity']
+        fields = ['uuid', 'name', 'description', 'price', 'product_profile_image', 'images', 'quantity',
+                  'write_quantity']
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if 'quantity' not in data:
-            try:
-                product_inventory = ProductInventory.objects.get(product=instance)
-                data['quantity'] = product_inventory.quantity
-            except ProductInventory.DoesNotExist:
-                data['quantity'] = None
-        return data
 
     def create(self, validated_data):
         images = validated_data.pop('images', [])
-        quantity = validated_data.pop('quantity', None)
+        quantity = validated_data.pop('write_quantity')
+
         product = Product.objects.create(**validated_data)
         shop = product.shop
 
         if quantity is not None:
+
             shop_inventory, _ = Inventory.objects.get_or_create(shop=shop)
             ProductInventory.objects.create(inventory=shop_inventory, product=product, quantity=quantity)
+            print(shop_inventory)
 
         else:
             raise serializers.ValidationError("A quantity must be specified")
@@ -67,28 +56,50 @@ class ListCreateProductSerializer(DynamicFieldsModelSerializer):
 
 
 class ManageProductSerializer(DynamicFieldsModelSerializer):
-    quantity = ProductInventorySerializer(source = 'productinventory', required=False , read_only=True)
-    avg_rating = serializers.SerializerMethodField()
-    images = ImageSerializer(many=True, required=False, source='image_set', read_only=True)
+    quantity = serializers.IntegerField(source = 'productinventory.quantity', read_only=True)
+    images = ImageSerializer(many=True, source='image_set', read_only=True)
+
+    write_quantity = serializers.IntegerField(write_only=True, required=False)
+    image = serializers.ListField(
+        child=VersatileImageFieldSerializer(sizes='product_images'),
+        write_only=True, required=False)
 
     class Meta:
         model = Product
-        fields = ['uuid', 'name', 'description', 'product_profile_image', 'price', 'avg_rating', 'quantity', 'images']
+        fields = ['uuid', 'slug','name', 'description', 'product_profile_image',
+                  'price','average_rating', 'quantity', 'images',
+                  'write_quantity', 'image'
+                  ]
 
-    def get_avg_rating(self, obj):
-        ratings = CustomerReview.objects.filter(product=obj)
-        if ratings.exists():
-            return ratings.aggregate(Avg('rating'))['rating__avg']
-        return None
 
-def update(self, instance, validated_data):
+    def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
         instance.product_profile_image = validated_data.get(
             'product_profile_image',
             instance.product_profile_image)
-
         instance.save()
+
+        quantity = validated_data.get('write_quantity')
+        if quantity is not None:
+            product_inventory = get_object_or_404(ProductInventory, product=instance)
+            product_inventory.quantity = quantity
+            product_inventory.save()
+
+        images_data = validated_data.get('image')
+        if images_data:
+            if isinstance(images_data, list):
+                for image_data in images_data:
+
+                    Image.objects.create(image=image_data, product=instance)
+            else:
+                    Image.objects.create(image=images_data, product=instance)
+
+        # delete_image_uuid= validated_data.get('delete_images_uuid', None)
+        # if delete_image_uuid:
+        #     image_to_delete= get_object_or_404(Image, uuid=delete_image_uuid)
+        #     image_to_delete.delete()
+
 
         return instance
 

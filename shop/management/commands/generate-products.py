@@ -13,8 +13,7 @@ class Command(BaseCommand):
         parser.add_argument('shop_slug' , type=str)
         parser.add_argument('number_of_products' , type=int)
 
-    def handle(slef, *args, **kwargs):
-
+    def handle(self, *args, **kwargs):
         shop = get_object_or_404(Shop, slug=kwargs['shop_slug'])
         number = kwargs['number_of_products']
 
@@ -30,7 +29,7 @@ class Command(BaseCommand):
             inventory, created = ProductInventory.objects.get_or_create(product=product, inventory=shop.inventory)
             inventory.quantity = payload['quantity']
 
-            # print(product.name)
-            # print(product.description)
-            # print(product.price)
-            # print(product.inventory.quantity)
+            print(product.name)
+            print(product.description)
+            print(product.price)
+            print(product.productinventory.quantity)

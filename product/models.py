@@ -1,7 +1,8 @@
 import uuid
 from django.db import models
-
+from django.db.models import Avg
 from django.contrib.auth import get_user_model
+
 
 from versatileimagefield.fields import VersatileImageField
 from autoslug import AutoSlugField
@@ -9,6 +10,7 @@ from autoslug import AutoSlugField
 from shop.models import Shop
 
 User = get_user_model()
+
 class Product(models.Model):
 
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -22,12 +24,17 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def average_rating(self):
+        ratings = CustomerReview.objects.filter(product=self)
+        if ratings.exists():
+            return ratings.aggregate(Avg('rating'))['rating__avg']
+
+
 
 class Image(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = VersatileImageField(blank=True, null= True, upload_to='images/')
-    farce = models.CharField( max_length=50, blank= True)
 
     def __str__(self):
         return f"image of {self.product.name}"
@@ -72,3 +79,4 @@ class CustomerReview(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.user.username}"
+

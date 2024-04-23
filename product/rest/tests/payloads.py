@@ -25,5 +25,7 @@ def product_update_payload():
     return{
         'description': faker.sentence(),
         'price': formatted_price,
-        'quantity': faker.random_int(min=100, max=600),
+        'quantity': {
+            'quantity': faker.random_int(min=100, max=600)
+        }
     }

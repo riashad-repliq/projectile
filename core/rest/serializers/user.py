@@ -20,7 +20,6 @@ class UserSerializer(DynamicFieldsModelSerializer):#shop info not found
 
     def create(self, validated_data):
         user = get_user_model().objects.create_user(**validated_data)
-        Cart.objects.create(user=user)
 
         return user
 

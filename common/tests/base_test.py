@@ -20,7 +20,6 @@ class BaseTest(APITestCase):
             password = self.user_payload['password'],
             username = self.user_payload['username']
         )
-        Cart.objects.create(user=self.user)
 
         login_data = {
             'phone_number': self.user_payload['phone_number'],

@@ -40,13 +40,15 @@ class ProductTest(BaseTest):
 
     def test_update_product(self):
         product = self.test_create_product()
-        updated_paylaoad =payloads.product_update_payload()
 
-        response = self.client.patch(urlhelpers.product_update_url(self.shop.uuid, product.uuid),updated_paylaoad)
+        updated_payload =payloads.product_update_payload()
 
-        self.assertEqual(response.data['price'],updated_paylaoad['price'])
-        self.assertEqual(response.data['description'],updated_paylaoad['description'])
-        self.assertEqual(response.data['quantity'],updated_paylaoad['quantity'])
+        response = self.client.patch(urlhelpers.product_update_url(self.shop.uuid, product.uuid),data=json.dumps(updated_payload), content_type='application/json')
+
+        self.assertEqual(response.data['price'],updated_payload['price'])
+        self.assertEqual(response.data['description'],updated_payload['description'])
+        self.assertEqual(response.data['quantity'],updated_payload['quantity'])
+        print(json.dumps(response.data, indent=4))
 
 
     def test_delete_product(self):

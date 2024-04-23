@@ -8,11 +8,11 @@ User= get_user_model()
 
 class Order(models.Model):
     DELIVERY_STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('processing', 'Processing'),
-        ('shipped', 'Shipped'),
-        ('delivered', 'Delivered'),
-        ('cancelled', 'Cancelled'),
+        ('Pending', 'Pending'),
+        ('Processing', 'Processing'),
+        ('Shipped', 'Shipped'),
+        ('Delivered', 'Delivered'),
+        ('Cancelled', 'Cancelled'),
     ]
 
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -26,8 +26,6 @@ class Order(models.Model):
         for order_item in self.order_items.filter():
             total_price += order_item.calculate_price()
         return total_price
-
-
 
 
     def __str__(self):

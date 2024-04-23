@@ -21,7 +21,10 @@ class OrderItemListAPIView(ListAPIView):
 
 
     def get_queryset(self):
-        order_items = OrderItem.objects.filter(order__user=self.request.user)
+        order_uuid=self.kwargs.get('order_uuid')
+        print(order_uuid)
+        order =get_object_or_404(Order, uuid=order_uuid)
+        order_items = OrderItem.objects.filter(order__user=self.request.user, order=order)
         return order_items
 
 class OrderItemManageView(RetrieveUpdateDestroyAPIView):

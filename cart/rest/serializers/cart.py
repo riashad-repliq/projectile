@@ -38,18 +38,17 @@ class ListCreateCartItemSerializer(DynamicFieldsModelSerializer):
         product_uuid = validated_data.get('product_uuid')
         product = get_object_or_404(Product, uuid=product_uuid)
 
-        if CartItem.objects.filter(product=product).exists():
+        cart = self.context['request'].user.cart
+
+        if CartItem.objects.get(product=product, cart=cart):
             raise serializers.ValidationError("Product already exists in cart")
 
         quantity = validated_data.get('quantity')
-        cart = self.context['request'].user.cart
 
-        if product.inventory.quantity < quantity :
+        if product.productinventory.quantity < quantity :
             raise serializers.ValidationError('Not enough quantity in stock')
 
         cart_item = CartItem.objects.create(cart=cart, product=product, quantity=quantity)
-        product.inventory.quantity = product.inventory.quantity - cart_item.quantity
-        product.inventory.save()
 
         return cart_item
 

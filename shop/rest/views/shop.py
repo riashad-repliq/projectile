@@ -26,16 +26,10 @@ class ShopListCreateView(ListCreateAPIView):
         shop= serializer.save()
 
         user = self.request.user
-        this_membership = Member.objects.create(shop =shop, user = user, member_type ='owner')
-
         all_memberships =Member.objects.filter(user = user)
         all_memberships.update(last_visited=False)
-        this_membership.last_visited= True
-        this_membership.save()
 
-
-        Inventory.objects.create(shop=shop)
-
+        Member.objects.create(shop =shop, user = user, member_type ='owner', last_visited=True)
 
 class RetrieveShopView(RetrieveAPIView):
     serializer_class = PublicShopSerializer
@@ -81,9 +75,11 @@ class ManageShopView(RetrieveUpdateDestroyAPIView):
         shop_uuid = self.kwargs.get('shop_uuid')
         shop = get_object_or_404(Shop, uuid=shop_uuid)
 
-        this_membership = Member.objects.get(shop=shop, user=self.request.user)
         all_memberships =Member.objects.filter(user = self.request.user)
         all_memberships.update(last_visited=False)
+
+        this_membership = Member.objects.get(shop=shop, user=self.request.user)
+
         this_membership.last_visited= True
         this_membership.save()
         return shop
