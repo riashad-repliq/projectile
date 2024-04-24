@@ -63,8 +63,9 @@ class ManageProductView(RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         """shop retrieval is done through the permission class"""
-
+        shop_uuid = self.kwargs.get('shop_uuid')
+        shop= get_object_or_404(Shop, uuid=shop_uuid)
         product_uuid = self.kwargs.get('product_uuid')
-        product = get_object_or_404(Product, uuid=product_uuid)
+        product = get_object_or_404(Product, uuid=product_uuid, shop=shop)
         return product
 

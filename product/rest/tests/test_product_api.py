@@ -47,8 +47,8 @@ class ProductTest(BaseTest):
 
         self.assertEqual(response.data['price'],updated_payload['price'])
         self.assertEqual(response.data['description'],updated_payload['description'])
-        self.assertEqual(response.data['quantity'],updated_payload['quantity'])
-        print(json.dumps(response.data, indent=4))
+        self.assertEqual(response.data['quantity'],updated_payload['write_quantity'])
+        # print(json.dumps(response.data, indent=4))
 
 
     def test_delete_product(self):

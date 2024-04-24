@@ -18,18 +18,12 @@ class Product(models.Model):
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null= True)
-    product_profile_image = VersatileImageField(blank=True, null= True, upload_to= 'images/product_profile')
+    profile_image = VersatileImageField(blank=True, null= True, upload_to= 'images/product_profile')
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    average_rating = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.name
-
-    def average_rating(self):
-        ratings = CustomerReview.objects.filter(product=self)
-        if ratings.exists():
-            return ratings.aggregate(Avg('rating'))['rating__avg']
-        return None
-
 
 
 class Image(models.Model):
@@ -70,13 +64,25 @@ class CustomerReview(models.Model):
     ]
 
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_ratings')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings')
-    rating = models.IntegerField(choices=RATING_STAR_CHOICES)
+    rating = models.IntegerField(choices=RATING_STAR_CHOICES, )
     review = models.TextField(blank=True, null=True)
+
 
     class Meta:
         unique_together = ('user', 'product')
 
     def __str__(self):
-        return f"{self.product.name} - {self.user.username}"
+
+        return f"{self.product.name} - {self.user.username}, {self.average_rating}"
+
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        ratings = CustomerReview.objects.filter(product=self.product)
+        if ratings.exists():
+            self.product.average_rating = ratings.aggregate(Avg('rating'))['rating__avg']
+        else:
+            self.product.average_rating = None
+        self.product.save()

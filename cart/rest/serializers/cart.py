@@ -40,8 +40,8 @@ class ListCreateCartItemSerializer(DynamicFieldsModelSerializer):
 
         cart = self.context['request'].user.cart
 
-        if CartItem.objects.get(product=product, cart=cart):
-            raise serializers.ValidationError("Product already exists in cart")
+        # if CartItem.objects.get(product=product, cart=cart):
+        #     raise serializers.ValidationError("Product already exists in cart")
 
         quantity = validated_data.get('quantity')
 

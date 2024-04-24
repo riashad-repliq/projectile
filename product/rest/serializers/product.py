@@ -13,7 +13,7 @@ class ProductSerializer(DynamicFieldsModelSerializer):
     images = ImageSerializer(many=True, source='image_set' ,required=False)
     class Meta:
         model = Product
-        fields = ['uuid','slug', 'name', 'description', 'price','product_profile_image','average_rating', 'images' ]
+        fields = ['uuid','slug', 'name', 'description', 'price', 'average_rating', 'profile_image', 'images' ]
 
 
 """Private Product Serializers"""
@@ -25,7 +25,7 @@ class ListCreateProductSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['uuid', 'name', 'description', 'price', 'product_profile_image', 'images', 'quantity',
+        fields = ['uuid', 'name', 'description', 'price', 'profile_image', 'images', 'quantity',
                   'write_quantity']
 
 
@@ -64,7 +64,7 @@ class ManageProductSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['uuid', 'slug','name', 'description', 'product_profile_image',
+        fields = ['uuid', 'slug','name', 'description', 'profile_image',
                   'price','average_rating', 'quantity', 'images',
                   'write_quantity', 'image', 'delete_image_uuid', 'update_image_uuid', 'update_image'
                   ]
@@ -73,9 +73,8 @@ class ManageProductSerializer(DynamicFieldsModelSerializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
-        instance.product_profile_image = validated_data.get(
-            'product_profile_image',
-            instance.product_profile_image)
+        instance.profile_image = validated_data.get('profile_image',instance.profile_image)
+        instance.price = validated_data.get('price',instance.price)
         instance.save()
 
         quantity = validated_data.get('write_quantity')
@@ -106,4 +105,6 @@ class ManageProductSerializer(DynamicFieldsModelSerializer):
             image_to_update.image = update_image
             image_to_update.save()
 
+
         return instance
+

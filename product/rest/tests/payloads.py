@@ -13,9 +13,9 @@ def product_create_payload():
         'shop': None,
         'name': faker.name(),
         'description': faker.sentence(),
-        'product_profile_image': '',
+        'profile_image': '',
         'price': faker.random_int(min=10, max=100),
-        'quantity': faker.random_int(min=100, max=600),
+        'write_quantity': faker.random_int(min=100, max=600),
 
     }
 
@@ -25,7 +25,5 @@ def product_update_payload():
     return{
         'description': faker.sentence(),
         'price': formatted_price,
-        'quantity': {
-            'quantity': faker.random_int(min=100, max=600)
-        }
+        'write_quantity': faker.random_int(min=100, max=600)
     }
