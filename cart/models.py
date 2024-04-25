@@ -6,9 +6,10 @@ from product.models import Product
 
 User = get_user_model()
 
+
 class Cart(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cart")
 
     def __str__(self):
         return f"{self.user.username}'s cart"
@@ -20,21 +21,18 @@ class Cart(models.Model):
         return total_price
 
 
-
-class CartItem (models.Model):
+class CartItem(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
-    product =models.ForeignKey(Product, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     selected = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ('cart', 'product')
+        unique_together = ("cart", "product")
 
     def __str__(self):
         return f"{self.product.name} from {self.product.shop.name}"
 
     def calculate_price(self):
         return self.product.price * self.quantity
-
-

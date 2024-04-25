@@ -8,12 +8,14 @@ from core.rest.serializers.user import (
     UserSerializer,
 )
 
+
 class CreateUserView(CreateAPIView):
     serializer_class = UserSerializer
 
 
 class ManageUserView(RetrieveUpdateDestroyAPIView):
     """Manage the authenticated user."""
+
     serializer_class = UserSerializer
     queryset = User.objects.filter()
     authentication_classes = [JWTAuthentication]

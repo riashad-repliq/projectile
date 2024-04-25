@@ -5,7 +5,7 @@ from core.models import User
 from cart.models import Cart
 
 
-@receiver(post_save,sender=User)
-def create_cart(sender, instance, created ,**kwargs):
+@receiver(post_save, sender=User)
+def create_cart(sender, instance, created, **kwargs):
     if created:
         Cart.objects.create(user=instance)

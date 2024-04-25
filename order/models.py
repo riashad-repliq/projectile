@@ -4,15 +4,16 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from product.models import Product
 
-User= get_user_model()
+User = get_user_model()
+
 
 class Order(models.Model):
     DELIVERY_STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Processing', 'Processing'),
-        ('Shipped', 'Shipped'),
-        ('Delivered', 'Delivered'),
-        ('Cancelled', 'Cancelled'),
+        ("Pending", "Pending"),
+        ("Processing", "Processing"),
+        ("Shipped", "Shipped"),
+        ("Delivered", "Delivered"),
+        ("Cancelled", "Cancelled"),
     ]
 
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -27,17 +28,17 @@ class Order(models.Model):
             total_price += order_item.calculate_price()
         return total_price
 
-
     def __str__(self):
         return f"Order no {self.uuid}"
 
 
 class OrderItem(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    order = models.ForeignKey(Order, on_delete= models.CASCADE, related_name='order_items')
-    product = models.ForeignKey(Product, on_delete= models.CASCADE)
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name="order_items"
+    )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
-
 
     def calculate_price(self):
         return self.product.price * self.quantity

@@ -12,5 +12,3 @@ def user_create_payload():
         "password": faker.password(),
         "username": faker.name(),
     }
-
-

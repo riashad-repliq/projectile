@@ -3,7 +3,8 @@ from rest_framework import status
 
 from common.tests.base_test import BaseTest
 
-from .import urlhelpers
+from . import urlhelpers
+
 
 class CartTest(BaseTest):
     def setUp(self):

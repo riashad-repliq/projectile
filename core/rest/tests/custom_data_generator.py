@@ -1,17 +1,14 @@
-
 from faker.providers import BaseProvider
+
 # from PIL import Image
 # from io import BytesIO
+
 
 class CustomDataGenerator(BaseProvider):
     def generate_phone_number(self):
         sim = str(self.random_element(["17", "18", "19", "16", "15"]))
-        suffix =str(self.random_int(min=10000000, max=99999999))
-        return (
-            "+880"
-            + sim
-            + suffix
-        )
+        suffix = str(self.random_int(min=10000000, max=99999999))
+        return "+880" + sim + suffix
 
 
 # def generate_fake_image():
@@ -36,4 +33,3 @@ class CustomDataGenerator(BaseProvider):
 
 # # Usage example with extension 'png'
 # fake_image_file_path = generate_fake_image_file(extension='jpg')
-

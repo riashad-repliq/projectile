@@ -5,18 +5,21 @@ from django.dispatch import receiver
 
 
 from order.models import OrderItem
-from .models import Inventory,ProductInventory
+from .models import Inventory, ProductInventory
 from shop.models import Shop
+
 
 @receiver(post_save, sender=OrderItem)
 def update_product_quantity(sender, instance, created, **kwargs):
     if created:
-        product_inventory = get_object_or_404(ProductInventory, product=instance.product)
+        product_inventory = get_object_or_404(
+            ProductInventory, product=instance.product
+        )
         product_inventory.quantity = product_inventory.quantity - instance.quantity
         product_inventory.save()
 
 
-@receiver(post_save, sender= Shop)
+@receiver(post_save, sender=Shop)
 def create_shop_inventory(sender, instance, created, **kwargs):
     if created:
         Inventory.objects.create(shop=instance)

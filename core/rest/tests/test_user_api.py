@@ -4,6 +4,7 @@ from rest_framework import status
 from common.tests.base_test import BaseTest
 from . import payloads, urlhelpers
 
+
 class UserApiTest(BaseTest):
     def setUp(self):
         super().setUp()
@@ -23,7 +24,7 @@ class UserApiTest(BaseTest):
     def test_update_user(self):
 
         update_payload = payloads.user_create_payload()
-        response =self.client.patch(urlhelpers.update_user_url(), update_payload)
+        response = self.client.patch(urlhelpers.update_user_url(), update_payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

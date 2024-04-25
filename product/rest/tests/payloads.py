@@ -9,21 +9,21 @@ faker = Faker()
 
 
 def product_create_payload():
-    return{
-        'shop': None,
-        'name': faker.name(),
-        'description': faker.sentence(),
-        'profile_image': '',
-        'price': faker.random_int(min=10, max=100),
-        'write_quantity': faker.random_int(min=100, max=600),
-
+    return {
+        "shop": None,
+        "name": faker.name(),
+        "description": faker.sentence(),
+        "profile_image": "",
+        "price": faker.random_int(min=10, max=100),
+        "write_quantity": faker.random_int(min=100, max=600),
     }
+
 
 def product_update_payload():
     price = faker.random_int(min=1, max=222)
     formatted_price = "{:.2f}".format(price)
-    return{
-        'description': faker.sentence(),
-        'price': formatted_price,
-        'write_quantity': faker.random_int(min=100, max=600)
+    return {
+        "description": faker.sentence(),
+        "price": formatted_price,
+        "write_quantity": faker.random_int(min=100, max=600),
     }

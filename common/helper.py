@@ -11,7 +11,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         # Don't pass the 'fields' arg up to the superclass
-        fields = kwargs.pop('fields', None)
+        fields = kwargs.pop("fields", None)
 
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)
@@ -24,8 +24,9 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
                 self.fields.pop(field_name)
 
 
-
 """find attributes associated with an extra SerializerMethodField"""
+
+
 def get_attribute(instance, model, attribute):
     if hasattr(instance, model):
         return getattr(getattr(instance, model), attribute, None)
