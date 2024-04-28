@@ -17,6 +17,7 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
+    path("check-response/", include("silk.urls", namespace="silk")),
     # ProjectAPPs
     path("api/v1", include("core.rest.urls")),
     # path("api/v1/auth",include('core.rest.urls.auth')),

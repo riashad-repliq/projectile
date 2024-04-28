@@ -16,7 +16,7 @@ from product.rest.serializers.product import (
     ManageProductSerializer,
     ListCreateProductSerializer,
 )
-from common.permissions.shop import ShopPermission, ProductPermission
+from common.permissions.shop import DefaultShopPermission, ProductPermission
 
 """PUBLIC PRODUCT VIEWS"""
 
@@ -82,3 +82,14 @@ class ManageProductView(RetrieveUpdateDestroyAPIView):
         product_uuid = self.kwargs.get("product_uuid")
         product = get_object_or_404(Product, uuid=product_uuid, shop=shop)
         return product
+
+
+class DefaultShopProducts(ListCreateAPIView):
+    serializer_class = ListCreateProductSerializer
+    permission_classes = [DefaultShopPermission]
+
+    def get_queryset(self):
+
+        # print(self.request.shop, "not somethin")
+        products = Product.objects.filter(shop=self.request.shop)
+        return products

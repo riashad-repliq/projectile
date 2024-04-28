@@ -16,7 +16,6 @@ class UserApiTest(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_retrieve_user(self):
-
         response = self.client.get(urlhelpers.update_user_url())
         # print(json.dumps(response.data, indent=4))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

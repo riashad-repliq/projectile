@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 
+from core.rest.tests.custom_data_generator import generate_random_order_no
 from django.contrib.auth import get_user_model
 from product.models import Product
 
@@ -17,6 +18,7 @@ class Order(models.Model):
     ]
 
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    order_no = models.CharField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_amount = models.DecimalField(max_digits=100, decimal_places=2)
     order_date = models.DateTimeField(auto_now_add=True)
@@ -30,6 +32,18 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order no {self.uuid}"
+
+    def generate_order_no(self):
+        new_order_no = generate_random_order_no()
+        try:
+            Order.objects.get(order_no=new_order_no)
+            return self.generate_order_no()
+        except Order.DoesNotExist:
+            self.order_no = new_order_no
+            self.save()
+            return self.order_no
+
+
 
 
 class OrderItem(models.Model):

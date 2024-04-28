@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "versatileimagefield",
     "phonenumber_field",
+    "silk",
     "core",
     "shop",
     "product",
@@ -32,10 +33,12 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # "shop.middleware.DefaultShopMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "silk.middleware.SilkyMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -86,23 +89,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-}
 
-SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(days=29)}
-
-
-VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
-    "product_images": [
-        ("thumbnail", "crop__100x100"),
-        ("medium", "crop__300x200"),
-        ("large", "crop__600x400"),
-    ],
-}
 SILENCED_SYSTEM_CHECKS = ["urls.W002", "security.W019"]
 
 
@@ -125,3 +112,29 @@ AUTH_USER_MODEL = "core.User"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(days=29)}
+
+
+VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
+    "product_images": [
+        ("thumbnail", "crop__100x100"),
+        ("medium", "crop__300x200"),
+        ("large", "crop__600x400"),
+    ],
+}
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "riashadhasa@gmail.com"
+EMAIL_HOST_PASSWORD = "vktf okoh ccgf yqvl"

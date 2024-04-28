@@ -8,6 +8,11 @@ urlpatterns = [
         ListCreateProductView.as_view(),
         name="list-create-products",
     ),
+    # path(
+    #     "/we/shop/products",
+    #     DefaultShopProducts.as_view(),
+    #     name="defualt-shop-products",
+    # ),
     path(
         "/we/shops/<uuid:shop_uuid>/products/<uuid:product_uuid>",
         ManageProductView.as_view(),
