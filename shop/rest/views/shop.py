@@ -62,9 +62,9 @@ class ShopView(RetrieveUpdateDestroyAPIView):
     permission_classes = [DefaultShopPermission]
 
     def get_object(self):
-        member = Member.objects.filter(user=self.request.user, last_visited =True)
+        member = Member.objects.filter(user=self.request.user, last_visited=True)
         if member:
-                return member.shop
+            return member.shop
         return None
 
 
